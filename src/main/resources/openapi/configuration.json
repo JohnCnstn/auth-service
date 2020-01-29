@@ -1,0 +1,12 @@
+[
+  {
+    "name": "openapi.json",
+    "url": "/openapi.json",
+    "location": "/openapi.json"
+  },
+  {
+    "name": "openapi.yaml",
+    "url": "/openapi.yaml",
+    "location": "/openapi.yaml"
+  }
+]

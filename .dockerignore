@@ -1,0 +1,4 @@
+*
+!build/libs/*.jar
+!docker-cmd.sh
+!Dockerfile

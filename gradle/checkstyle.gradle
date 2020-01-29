@@ -1,0 +1,15 @@
+checkstyle {
+    ignoreFailures = false
+    showViolations = true
+
+    project.ext.checkstyleVersion = '8.18'
+    project.ext.sevntuChecksVersion = '1.32.0'
+
+    configDir = file("$project.rootDir/codeCheck")
+    reportsDir = file("$project.buildDir/reports")
+    dependencies {
+        assert project.hasProperty("checkstyleVersion")
+        checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
+        checkstyle "com.github.sevntu-checkstyle:sevntu-checks:${sevntuChecksVersion}"
+    }
+}
