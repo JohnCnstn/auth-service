@@ -19,7 +19,6 @@ public class DomainUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    @SuppressWarnings("")
     public DomainUserDetails loadUserByUsername(String username) {
         return loadUserByEmail(username);
     }
