@@ -40,6 +40,11 @@
             <property name="constantPattern" value="[A-Z][A-Z_0-9]*|[a-z][a-zA-Z0-9]*"/>
         </properties>
     </rule>
+    <rule ref="category/java/codestyle.xml/MethodNamingConventions">
+        <properties>
+            <property name="methodPattern" value="[a-z][_a-zA-Z0-9]*" />
+        </properties>
+    </rule>
     <rule ref="category/java/codestyle.xml/ClassNamingConventions">
         <properties>
             <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]+(Utils|Helper|Constants)"/>
