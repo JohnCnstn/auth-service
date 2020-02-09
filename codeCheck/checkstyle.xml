@@ -22,7 +22,7 @@
         </module>
 
         <module name="com.github.sevntu.checkstyle.checks.annotation.ForbidAnnotationCheck">
-            <property name="annotationNames" value="EqualsAndHashCode,Data,Value,ExtensionMethod,Delegate,Accessors,
+            <property name="annotationNames" value="Data,Value,ExtensionMethod,Delegate,Accessors,
             FieldDefaults,FieldNameConstants,Helper,NonFinal,PackagePrivate,Tolerate,Wither"/>
             <property name="annotationTargets" value="CLASS_DEF"/>
         </module>

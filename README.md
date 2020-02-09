@@ -1,5 +1,5 @@
-# Service Template
-Service template for new microservices.
+# Auth backend
+Auth backend
 
 ## Architecture
 

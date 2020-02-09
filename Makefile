@@ -1,6 +1,6 @@
 APP_VERSION_UNIX := $(shell echo `date -u '+%Y-%m-%d-%H-%M-%S'`-`git rev-parse --short HEAD`)
 APP_VERSION_WIN := $(shell FOR /F %i IN ('git rev-parse --short HEAD') DO set commit=%i & echo %date:~10,4%-%date:~4,2%-%date:~7,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%-%commit%)
-PROJECT_NAME := workplace
+PROJECT_NAME := auth-backend
 SERVICE_NAME := $(PROJECT_NAME)-backend
 DOCKER_IMAGE := $(SERVICE_NAME):latest
 

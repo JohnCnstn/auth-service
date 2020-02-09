@@ -1,7 +1,7 @@
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
-/src/main/java/com/johncnstn/servicetemplate/generated
+/src/main/java/com/johncnstn/auth/generated
 /buildSrc/build
 /buildSrc/.gradle
 

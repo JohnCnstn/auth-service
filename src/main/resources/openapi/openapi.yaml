@@ -1,115 +1,186 @@
-openapi: "3.0.0"
+openapi: 3.0.0
+
 info:
-  version: 1.0.0
-  title: Swagger Petstore
-  license:
-    name: MIT
+  version: unknown
+  title: Auth-backend
+
 servers:
-  - url: http://petstore.swagger.io/v1
+  - url: /v1
+
 paths:
-  /pets:
-    get:
-      summary: List all pets
-      operationId: listPets
-      tags:
-        - pets
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: A paged array of pets
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pets"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
+  # ========================================
+  # ===== Auth API
+  # ========================================
+
+  /auth/signup:
+
     post:
-      summary: Create a pet
-      operationId: createPets
+      operationId: signUp
       tags:
-        - pets
+        - auth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
-        '201':
-          description: Null response
-        default:
-          description: unexpected error
+        201:
+          description: Created
+          # FIXME: add location header
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-  /pets/{petId}:
-    get:
-      summary: Info for a specific pet
-      operationId: showPetById
+                $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /auth/signin:
+
+    post:
+      operationId: signIn
       tags:
-        - pets
-      parameters:
-        - name: petId
-          in: path
-          required: true
-          description: The id of the pet to retrieve
-          schema:
-            type: string
+        - auth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
       responses:
-        '200':
-          description: Expected response to a valid request
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pets"
+                $ref: '#/components/schemas/Token'
         default:
-          description: unexpected error
+          $ref: '#/components/responses/UnexpectedError'
+
+  /auth/refresh-token:
+
+    post:
+      operationId: refreshToken
+      tags:
+        - auth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Token'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
 components:
+
+  responses:
+
+    UnexpectedError:
+      description: Unexpected Error
+
   schemas:
-    Pet:
+
+    Token:
+      type: object
+      properties:
+        issuedAt:
+          type: integer
+          format: int64
+        accessToken:
+          type: string
+        accessExpiresIn:
+          type: integer
+          format: int64
+        refreshToken:
+          type: string
+        refreshExpiresIn:
+          type: integer
+          format: int64
+
+    SignInRequest:
       required:
-        - id
-        - name
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        remember-me:
+          type: boolean
+          writeOnly: true
+          default: true
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          x-format: not-blank
+        refreshToken:
+          type: string
+          x-format: not-blank
+
+    User:
+      required:
+        - email
+        - password
       properties:
         id:
           type: string
           format: uuid
-        name:
+          readOnly: true
+        role:
+          $ref: "#/components/schemas/UserRole"
+        email:
           type: string
-        tag:
+        password:
           type: string
+          writeOnly: true
         createdAt:
           type: string
           format: date-time
+          readOnly: true
         updatedAt:
           type: string
-          format: date
-    Pets:
-      type: array
-      items:
-        $ref: "#/components/schemas/Pet"
-    Error:
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
+          format: date-time
+          readOnly: true
+        deletedAt:
           type: string
+          format: date-time
+          readOnly: true
+
+    UserRole:
+      type: string
+      readOnly: true
+      enum:
+        - "USER"
+        - "ADMIN"
+
+  securitySchemes:
+
+    customerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+    adminAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
