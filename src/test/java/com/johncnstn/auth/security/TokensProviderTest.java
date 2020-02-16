@@ -1,6 +1,7 @@
 package com.johncnstn.auth.security;
 
 import com.johncnstn.auth.config.AppProperties;
+import com.johncnstn.auth.unit.AbstractUnitTest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +17,7 @@ import static io.jsonwebtoken.io.Decoders.BASE64;
 import static java.lang.System.currentTimeMillis;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-public class TokensProviderTest {
+public class TokensProviderTest extends AbstractUnitTest {
 
     private static AppProperties appProperties;
     private static TokensProvider tokensProvider;

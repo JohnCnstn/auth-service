@@ -1,48 +1,49 @@
 package com.johncnstn.auth.constraints;
 
+import com.johncnstn.auth.unit.AbstractUnitTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PasswordValidatorTest {
+public class PasswordValidatorTest extends AbstractUnitTest {
 
     @Test
-    public void testNull() {
+    public void nullValue() {
         testPassword(null, false);
     }
 
     @Test
-    public void testEmpty() {
+    public void empty() {
         testPassword("", false);
     }
 
     @Test
-    public void testWithWhitespace() {
+    public void withWhitespace() {
         testPassword("Password 1", false);
     }
 
     @Test
-    public void testWithNonAscii() {
+    public void withNonAscii() {
         testPassword("Passwordя1", false);
     }
 
     @Test
-    public void testWithoutAnyLower() {
+    public void withoutAnyLower() {
         testPassword("PASSWORD1", false);
     }
 
     @Test
-    public void testWithoutAnyUpper() {
+    public void withoutAnyUpper() {
         testPassword("password1", false);
     }
 
     @Test
-    public void testWithoutDigits() {
+    public void withoutDigits() {
         testPassword("password", false);
     }
 
     @Test
-    public void testFine() {
+    public void goodValue() {
         testPassword("Password1", true);
     }
 

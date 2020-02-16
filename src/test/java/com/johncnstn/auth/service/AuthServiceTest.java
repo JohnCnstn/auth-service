@@ -13,6 +13,7 @@ import com.johncnstn.auth.security.TokensProvider;
 import com.johncnstn.auth.service.impl.AuthServiceImpl;
 import com.johncnstn.auth.unit.AbstractUnitTest;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,6 +41,9 @@ public class AuthServiceTest extends AbstractUnitTest {
     @Mock
     private UserRepository userRepository;
 
+    @InjectMocks
+    private AuthServiceImpl authService;
+
     @Test
     public void testSignUp() {
         // GIVEN
@@ -53,8 +57,8 @@ public class AuthServiceTest extends AbstractUnitTest {
                 "xyz",
                 UserRoleEntity.USER);
 
+        when(passwordEncoder.encode(any())).thenReturn(any());
         when(userRepository.findByEmail(rawUser.getEmail())).thenReturn(entityToReturn);
-        var authService = buildAuthService();
 
         // WHEN
         var user = authService.signUp(rawUser, UserRole.USER);
@@ -91,7 +95,6 @@ public class AuthServiceTest extends AbstractUnitTest {
                 .build();
 
         when(tokensProvider.createTokens(authentication)).thenReturn(tokensToReturn);
-        var authService = buildAuthService();
 
         // WHEN
         var token = authService.signIn(request);
@@ -105,9 +108,5 @@ public class AuthServiceTest extends AbstractUnitTest {
             it.assertThat(token.getRefreshToken()).isEqualTo(tokensToReturn.getRefreshToken());
             it.assertThat(token.getRefreshExpiresIn()).isEqualTo(tokensToReturn.getRefreshExpiresIn());
         });
-    }
-
-    private AuthService buildAuthService() {
-        return new AuthServiceImpl(authenticationManager, passwordEncoder, tokensProvider, userRepository);
     }
 }

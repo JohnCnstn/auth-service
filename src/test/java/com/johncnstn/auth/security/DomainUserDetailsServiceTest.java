@@ -1,35 +1,36 @@
 package com.johncnstn.auth.security;
 
-import com.johncnstn.auth.entity.UserEntity;
 import com.johncnstn.auth.entity.enums.UserRoleEntity;
 import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.unit.AbstractUnitTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.UUID;
-
+import static com.johncnstn.auth.util.TestUtilKt.email;
+import static com.johncnstn.auth.util.TestUtilKt.userEntity;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 public class DomainUserDetailsServiceTest extends AbstractUnitTest {
 
     @Mock
     private UserRepository userRepository;
 
+    @InjectMocks
+    private DomainUserDetailsService userDetailsService;
+
     @Test
     public void testLoadExistingUser() {
         // GIVEN
-        var userDetailsService = new DomainUserDetailsService(userRepository);
-        var email = "test@mail.com";
-        var userEntity = new UserEntity(UUID.randomUUID(), email, "demo123", UserRoleEntity.USER);
-        Mockito.when(userRepository.findByEmail(email)).thenReturn(userEntity);
+        var userEntity = userEntity(UserRoleEntity.USER);
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(userEntity);
 
         // WHEN
-        var userDetails = userDetailsService.loadUserByUsername(email);
+        var userDetails = userDetailsService.loadUserByUsername(userEntity.getEmail());
 
         // THEN
         assertSoftly(it -> {
@@ -44,9 +45,8 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
     @Test
     public void testLoadNotExistingUser() {
         // GIVEN
-        var userDetailsService = new DomainUserDetailsService(userRepository);
-        var email = "test@mail.com";
-        Mockito.when(userRepository.findByEmail(email)).thenReturn(null);
+        var email = email();
+        when(userRepository.findByEmail(email)).thenReturn(null);
 
         // WHEN
         Executable executable = () -> userDetailsService.loadUserByUsername(email);
