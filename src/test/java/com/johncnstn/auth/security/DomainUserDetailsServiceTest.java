@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import static com.johncnstn.auth.util.TestUtilKt.email;
-import static com.johncnstn.auth.util.TestUtilKt.userEntity;
+import static com.johncnstn.auth.util.TestUtils.email;
+import static com.johncnstn.auth.util.TestUtils.userEntity;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;

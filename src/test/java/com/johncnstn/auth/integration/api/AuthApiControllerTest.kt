@@ -7,9 +7,7 @@ import com.johncnstn.auth.generated.model.Token
 import com.johncnstn.auth.generated.model.User
 import com.johncnstn.auth.generated.model.UserRole
 import com.johncnstn.auth.integration.AbstractIntegrationTest
-import com.johncnstn.auth.util.refreshTokenRequest
-import com.johncnstn.auth.util.signInRequest
-import com.johncnstn.auth.util.signUpRequest
+import com.johncnstn.auth.util.TestUtils.*
 import org.apache.commons.lang3.StringUtils
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.jupiter.api.Test
