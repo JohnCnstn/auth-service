@@ -3,17 +3,21 @@ package com.johncnstn.auth.security;
 import com.johncnstn.auth.config.AppProperties;
 import com.johncnstn.auth.unit.AbstractUnitTest;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
 import static com.johncnstn.auth.security.DomainGrantedAuthority.USER;
+import static com.johncnstn.auth.security.JwtTokenType.ACCESS;
+import static com.johncnstn.auth.security.JwtTokenType.REFRESH;
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 import static io.jsonwebtoken.io.Decoders.BASE64;
+import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 import static java.lang.System.currentTimeMillis;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -21,12 +25,16 @@ public class TokensProviderTest extends AbstractUnitTest {
 
     private static AppProperties appProperties;
     private static TokensProvider tokensProvider;
+    private static long accessTokenValidityMillis;
+    private static long refreshTokenValidityMillis;
 
     @BeforeAll
     public static void setUp() {
         appProperties = new AppProperties();
         tokensProvider = new TokensProvider(appProperties);
         tokensProvider.init();
+        accessTokenValidityMillis = appProperties.getJwt().getAccessTokenValidity() * 1000;
+        refreshTokenValidityMillis = appProperties.getJwt().getRefreshTokenValidity() * 1000;
     }
 
     @Test
@@ -44,9 +52,13 @@ public class TokensProviderTest extends AbstractUnitTest {
             it.assertThat(tokens.getIssuedAt()).isGreaterThan(0);
             it.assertThat(tokens.getIssuedAt()).isLessThanOrEqualTo(currentTimeMillis());
             it.assertThat(tokens.getAccessToken()).isNotNull();
-            it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(tokens.getIssuedAt() + 86400000L);
             it.assertThat(tokens.getRefreshToken()).isNotNull();
-            it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(tokens.getIssuedAt() + 3888000000L);
+
+            var expectedAccessExpiresIn = tokens.getIssuedAt() + accessTokenValidityMillis;
+            it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(expectedAccessExpiresIn);
+
+            var expectedRefreshExpiresIn = tokens.getIssuedAt() + refreshTokenValidityMillis;
+            it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(expectedRefreshExpiresIn);
         });
     }
 
@@ -59,14 +71,20 @@ public class TokensProviderTest extends AbstractUnitTest {
         var accessToken = createToken(
                 userDetails,
                 issuedAt,
-                JwtTokenType.ACCESS,
-                new Date(2020, 5, 10));
+                ACCESS,
+                Date.from(LocalDate
+                        .of(2020, 5, 10)
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()));
 
         var refreshToken = createToken(
                 userDetails,
                 issuedAt,
-                JwtTokenType.REFRESH,
-                new Date(2020, 5, 10));
+                REFRESH,
+                Date.from(LocalDate
+                        .of(2020, 5, 10)
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()));
 
         // WHEN
         JwtTokens tokens = tokensProvider.refreshTokens(accessToken, refreshToken);
@@ -77,9 +95,13 @@ public class TokensProviderTest extends AbstractUnitTest {
             it.assertThat(tokens.getIssuedAt()).isGreaterThan(0);
             it.assertThat(tokens.getIssuedAt()).isLessThanOrEqualTo(currentTimeMillis());
             it.assertThat(tokens.getAccessToken()).isNotNull();
-            it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(tokens.getIssuedAt() + 86400000L);
             it.assertThat(tokens.getRefreshToken()).isNotNull();
-            it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(tokens.getIssuedAt() + 3888000000L);
+
+            var expectedAccessExpiresIn = tokens.getIssuedAt() + accessTokenValidityMillis;
+            it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(expectedAccessExpiresIn);
+
+            var expectedRefreshExpiresIn = tokens.getIssuedAt() + refreshTokenValidityMillis;
+            it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(expectedRefreshExpiresIn);
         });
     }
 
@@ -88,11 +110,12 @@ public class TokensProviderTest extends AbstractUnitTest {
         if (userDetails.getUserId() != null) {
             builder.setSubject(userDetails.getUserId().toString());
         }
+
         builder.setExpiration(expiresIn);
         builder.setIssuedAt(issuedAt);
         builder.claim("rol", userDetails.getRole().getAuthority());
         builder.claim("typ", type.getValue());
-        builder.signWith(Keys.hmacShaKeyFor(BASE64.decode(appProperties.getJwt().getBase64Secret())), HS512);
+        builder.signWith(hmacShaKeyFor(BASE64.decode(appProperties.getJwt().getBase64Secret())), HS512);
         return builder.compact();
     }
 
