@@ -1,6 +1,6 @@
 package com.johncnstn.auth.entity;
 
-import com.johncnstn.auth.entity.enums.UserRoleEntity;
+import com.johncnstn.auth.entity.enums.UserRoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -44,6 +44,6 @@ public class UserEntity extends AbstractEntity {
     @Enumerated(STRING)
     @Type(type = "enumType")
     @Column(name = "role", nullable = false)
-    private UserRoleEntity role;
+    private UserRoleType role;
 
 }

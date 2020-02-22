@@ -1,7 +1,7 @@
 package com.johncnstn.auth.service;
 
 import com.johncnstn.auth.entity.UserEntity;
-import com.johncnstn.auth.entity.enums.UserRoleEntity;
+import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.generated.model.SignInRequest;
 import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.generated.model.UserRole;
@@ -19,9 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.UUID;
-
 import static java.lang.System.currentTimeMillis;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -52,10 +51,10 @@ public class AuthServiceTest extends AbstractUnitTest {
         rawUser.setPassword("demo123");
 
         var entityToReturn = new UserEntity(
-                UUID.randomUUID(),
+                randomUUID(),
                 rawUser.getEmail(),
                 "xyz",
-                UserRoleEntity.USER);
+                UserRoleType.USER);
 
         when(passwordEncoder.encode(any())).thenReturn(any());
         when(userRepository.findByEmail(rawUser.getEmail())).thenReturn(entityToReturn);
@@ -81,7 +80,7 @@ public class AuthServiceTest extends AbstractUnitTest {
         request.setEmail("test@mail.com");
         request.setPassword("demo123");
 
-        var principal = new DomainUserDetails(UUID.randomUUID(), DomainGrantedAuthority.USER);
+        var principal = new DomainUserDetails(randomUUID(), DomainGrantedAuthority.USER);
         var authentication = new UsernamePasswordAuthenticationToken(principal, "demo123");
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
 

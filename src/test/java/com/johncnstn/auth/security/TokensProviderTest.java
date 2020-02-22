@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.UUID;
 
 import static com.johncnstn.auth.security.DomainGrantedAuthority.USER;
 import static com.johncnstn.auth.security.JwtTokenType.ACCESS;
@@ -19,6 +18,7 @@ import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 import static io.jsonwebtoken.io.Decoders.BASE64;
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 import static java.lang.System.currentTimeMillis;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class TokensProviderTest extends AbstractUnitTest {
@@ -40,7 +40,7 @@ public class TokensProviderTest extends AbstractUnitTest {
     @Test
     public void createTokens() {
         // GIVEN
-        var principal = new DomainUserDetails(UUID.randomUUID(), USER);
+        var principal = new DomainUserDetails(randomUUID(), USER);
         var authentication = new UsernamePasswordAuthenticationToken(principal, "password");
 
         // WHEN
@@ -65,7 +65,7 @@ public class TokensProviderTest extends AbstractUnitTest {
     @Test
     public void refreshTokens() {
         // GIVEN
-        var id = UUID.randomUUID();
+        var id = randomUUID();
         var issuedAt = new Date();
         var userDetails = new DomainUserDetails(id, USER);
         var accessToken = createToken(

@@ -1,6 +1,6 @@
 package com.johncnstn.auth.security;
 
-import com.johncnstn.auth.entity.enums.UserRoleEntity;
+import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.unit.AbstractUnitTest;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
     @Test
     public void loadExistingUserShouldReturnUser() {
         // GIVEN
-        var userEntity = userEntity(UserRoleEntity.USER);
+        var userEntity = userEntity(UserRoleType.USER);
         when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(userEntity);
 
         // WHEN
