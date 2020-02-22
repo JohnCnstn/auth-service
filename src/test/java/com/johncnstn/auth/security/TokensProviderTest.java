@@ -30,7 +30,7 @@ public class TokensProviderTest extends AbstractUnitTest {
     }
 
     @Test
-    public void testCreateTokens() {
+    public void createTokens() {
         // GIVEN
         var principal = new DomainUserDetails(UUID.randomUUID(), USER);
         var authentication = new UsernamePasswordAuthenticationToken(principal, "password");
@@ -51,7 +51,7 @@ public class TokensProviderTest extends AbstractUnitTest {
     }
 
     @Test
-    public void testRefreshTokens() {
+    public void refreshTokens() {
         // GIVEN
         var id = UUID.randomUUID();
         var issuedAt = new Date();
@@ -95,4 +95,5 @@ public class TokensProviderTest extends AbstractUnitTest {
         builder.signWith(Keys.hmacShaKeyFor(BASE64.decode(appProperties.getJwt().getBase64Secret())), HS512);
         return builder.compact();
     }
+
 }

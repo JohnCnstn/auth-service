@@ -45,7 +45,7 @@ public class AuthServiceTest extends AbstractUnitTest {
     private AuthServiceImpl authService;
 
     @Test
-    public void testSignUp() {
+    public void signUp() {
         // GIVEN
         var rawUser = new User();
         rawUser.setEmail("test@mail.com");
@@ -75,7 +75,7 @@ public class AuthServiceTest extends AbstractUnitTest {
     }
 
     @Test
-    public void testSignIn() {
+    public void signIn() {
         // GIVEN
         var request = new SignInRequest();
         request.setEmail("test@mail.com");
@@ -109,4 +109,5 @@ public class AuthServiceTest extends AbstractUnitTest {
             it.assertThat(token.getRefreshExpiresIn()).isEqualTo(tokensToReturn.getRefreshExpiresIn());
         });
     }
+
 }

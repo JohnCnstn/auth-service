@@ -8,51 +8,51 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PasswordValidatorTest extends AbstractUnitTest {
 
     @Test
-    public void nullValue() {
-        testPassword(null, false);
+    public void nullShouldNotBeValid() {
+        testPasswordValidation(null, false);
     }
 
     @Test
-    public void empty() {
-        testPassword("", false);
+    public void emptyShouldNotBeValid() {
+        testPasswordValidation("", false);
     }
 
     @Test
-    public void withWhitespace() {
-        testPassword("Password 1", false);
+    public void withWhitespaceShouldNotBeValid() {
+        testPasswordValidation("Password 1", false);
     }
 
     @Test
-    public void withNonAscii() {
-        testPassword("Passwordя1", false);
+    public void withNonAsciiShouldNotBeValid() {
+        testPasswordValidation("Passwordя1", false);
     }
 
     @Test
-    public void withoutAnyLower() {
-        testPassword("PASSWORD1", false);
+    public void withoutAnyLowerShouldNotBeValid() {
+        testPasswordValidation("PASSWORD1", false);
     }
 
     @Test
-    public void withoutAnyUpper() {
-        testPassword("password1", false);
+    public void withoutAnyUpperShouldNotBeValid() {
+        testPasswordValidation("password1", false);
     }
 
     @Test
-    public void withoutDigits() {
-        testPassword("password", false);
+    public void withoutDigitsShouldNotBeValid() {
+        testPasswordValidation("password", false);
     }
 
     @Test
-    public void goodValue() {
-        testPassword("Password1", true);
+    public void goodValueShouldBeValid() {
+        testPasswordValidation("Password1", true);
     }
 
-    @Test
-    private void testPassword(String password, boolean expected) {
+    private void testPasswordValidation(String password, boolean shouldBeValid) {
         // WHEN
-        var result = PasswordValidator.isValid(password);
+        var isValid = PasswordValidator.isValid(password);
 
         // THEN
-        assertEquals(expected, result);
+        assertEquals(shouldBeValid, isValid);
     }
+
 }

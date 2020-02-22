@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class OpenapiControllerTest extends AbstractIntegrationTest {
 
     @Test
-    public void testOpenapiUiRedirectHappyPath() throws Exception {
+    public void openapiUiRedirect_happyPath() throws Exception {
         //GIVEN
         //WHEN
         var resultActions = mockMvc.perform(
@@ -21,7 +21,7 @@ public class OpenapiControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testGetUiConfigurationHappyPath() throws Exception {
+    public void fetchUiConfiguration_happyPath() throws Exception {
         //GIVEN
         //WHEN
         var resultActions = mockMvc.perform(
@@ -35,7 +35,7 @@ public class OpenapiControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testGetSecurityConfigurationHappyPath() throws Exception {
+    public void fetchSecurityConfiguration_happyPath() throws Exception {
         //GIVEN
         //WHEN
         var resultActions = mockMvc.perform(
@@ -49,7 +49,7 @@ public class OpenapiControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testGetConfigurationHappyPath() throws Exception {
+    public void fetchConfiguration_happyPath() throws Exception {
         //GIVEN
         //WHEN
         var resultActions = mockMvc.perform(
@@ -63,7 +63,7 @@ public class OpenapiControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testGetOpenapiYamlHappyPath() throws Exception {
+    public void fetchOpenapiYaml_happyPath() throws Exception {
         //GIVEN
         //WHEN
         var resultActionsYml = mockMvc.perform(
@@ -85,7 +85,7 @@ public class OpenapiControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testGetOpenapiJsonHappyPath() throws Exception {
+    public void fetchOpenapiJson_happyPath() throws Exception {
         //GIVEN
         //WHEN
         var resultActions = mockMvc.perform(

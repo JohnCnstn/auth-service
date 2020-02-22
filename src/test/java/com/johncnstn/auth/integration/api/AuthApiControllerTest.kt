@@ -22,7 +22,7 @@ import java.lang.System.currentTimeMillis
 class AuthApiControllerTest : AbstractIntegrationTest() {
 
     @Test
-    fun testSignUpAsUser_happyPath() {
+    fun signUpAsUser_happyPath() {
         // GIVEN
         val signUpRequest = signUpRequest()
 
@@ -34,7 +34,7 @@ class AuthApiControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    fun testSignIn_happyPath() {
+    fun signIn_happyPath() {
         // GIVEN
         val signUpRequest = signUpRequest()
         createUser(signUpRequest)
@@ -54,7 +54,7 @@ class AuthApiControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    fun testRefreshToken_happyPath() {
+    fun refreshToken_happyPath() {
         // GIVEN
         val signUpRequest = signUpRequest()
         val userEntity = createUser(signUpRequest)

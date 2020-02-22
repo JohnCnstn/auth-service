@@ -24,7 +24,7 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
     private DomainUserDetailsService userDetailsService;
 
     @Test
-    public void testLoadExistingUser() {
+    public void loadExistingUserShouldReturnUser() {
         // GIVEN
         var userEntity = userEntity(UserRoleEntity.USER);
         when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(userEntity);
@@ -43,7 +43,7 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
     }
 
     @Test
-    public void testLoadNotExistingUser() {
+    public void loadNotExistingUserShouldThrowException() {
         // GIVEN
         var email = email();
         when(userRepository.findByEmail(email)).thenReturn(null);
@@ -54,4 +54,5 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
         // THEN
         assertThrows(UsernameNotFoundException.class, executable);
     }
+
 }
