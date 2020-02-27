@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public User signUp(User user, UserRole userRole) {
         var userEntity = USER_MAPPER.toEntity(user);
-        var role = ROLE_MAPPER.toEntity(userRole);
+        var role = ROLE_MAPPER.toType(userRole);
         userEntity.setPasswordHash(passwordEncoder.encode(user.getPassword()));
         userEntity.setEmail(lowerCase(user.getEmail()));
         userEntity.setRole(role);

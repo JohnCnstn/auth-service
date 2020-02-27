@@ -1,6 +1,6 @@
 package com.johncnstn.auth.util
 
-import com.johncnstn.auth.constraints.PasswordValidator
+import com.johncnstn.auth.constraints.PasswordValidator.isPasswordValid
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.apache.commons.lang3.RandomStringUtils
@@ -19,7 +19,7 @@ fun generatePassword(): String {
     var password: String
     do {
         password = RandomStringUtils.randomAlphanumeric(DEFAULT_LENGTH)
-    } while (!PasswordValidator.isValid(password))
+    } while (!isPasswordValid(password))
     return password
 }
 

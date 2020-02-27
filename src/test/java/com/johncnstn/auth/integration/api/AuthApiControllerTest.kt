@@ -7,9 +7,7 @@ import com.johncnstn.auth.generated.model.Token
 import com.johncnstn.auth.generated.model.User
 import com.johncnstn.auth.generated.model.UserRole
 import com.johncnstn.auth.integration.AbstractIntegrationTest
-import com.johncnstn.auth.util.refreshTokenRequest
-import com.johncnstn.auth.util.signInRequest
-import com.johncnstn.auth.util.signUpRequest
+import com.johncnstn.auth.util.TestUtils.*
 import org.apache.commons.lang3.StringUtils
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.jupiter.api.Test
@@ -22,7 +20,7 @@ import java.lang.System.currentTimeMillis
 class AuthApiControllerTest : AbstractIntegrationTest() {
 
     @Test
-    fun testSignUpAsUser_happyPath() {
+    fun signUpAsUser_happyPath() {
         // GIVEN
         val signUpRequest = signUpRequest()
 
@@ -34,7 +32,7 @@ class AuthApiControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    fun testSignIn_happyPath() {
+    fun signIn_happyPath() {
         // GIVEN
         val signUpRequest = signUpRequest()
         createUser(signUpRequest)
@@ -54,7 +52,7 @@ class AuthApiControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    fun testRefreshToken_happyPath() {
+    fun refreshToken_happyPath() {
         // GIVEN
         val signUpRequest = signUpRequest()
         val userEntity = createUser(signUpRequest)

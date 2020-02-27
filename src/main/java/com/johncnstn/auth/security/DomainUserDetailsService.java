@@ -19,12 +19,11 @@ public class DomainUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    @SuppressWarnings("")
-    public DomainUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public DomainUserDetails loadUserByUsername(String username) {
         return loadUserByEmail(username);
     }
 
-    private DomainUserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+    private DomainUserDetails loadUserByEmail(String email) {
 
         //FIXME change with extension of user's dao
 

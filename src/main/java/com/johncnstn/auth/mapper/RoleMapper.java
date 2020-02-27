@@ -1,6 +1,6 @@
 package com.johncnstn.auth.mapper;
 
-import com.johncnstn.auth.entity.enums.UserRoleEntity;
+import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.generated.model.UserRole;
 import com.johncnstn.auth.security.DomainGrantedAuthority;
 import org.mapstruct.Mapper;
@@ -12,9 +12,8 @@ public interface RoleMapper {
 
     RoleMapper ROLE_MAPPER = getMapper(RoleMapper.class);
 
-    DomainGrantedAuthority toGrantedAuthority(UserRoleEntity source);
+    DomainGrantedAuthority toGrantedAuthority(UserRoleType source);
 
-
-    UserRoleEntity toEntity(UserRole userRole);
+    UserRoleType toType(UserRole userRole);
 
 }

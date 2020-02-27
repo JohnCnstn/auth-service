@@ -20,7 +20,7 @@ public class PasswordValidator implements ConstraintValidator<Password, CharSequ
     @SuppressWarnings("checkstyle:LineLength")
     private static final CharMatcher DIGITS_MATCHER = CharMatcher.forPredicate(CharUtils::isAsciiNumeric).precomputed();
 
-    public static boolean isValid(CharSequence value) {
+    public static boolean isPasswordValid(CharSequence value) {
         return isNotEmpty(value)
                 && !containsWhitespace(value)
                 && PRINTABLE_MATCHER.matchesAllOf(value)
@@ -31,7 +31,7 @@ public class PasswordValidator implements ConstraintValidator<Password, CharSequ
 
     @Override
     public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-        return isValid(value);
+        return isPasswordValid(value);
     }
 
     @Override

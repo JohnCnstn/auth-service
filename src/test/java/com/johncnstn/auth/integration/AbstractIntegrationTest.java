@@ -2,7 +2,7 @@ package com.johncnstn.auth.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.johncnstn.auth.entity.UserEntity;
-import com.johncnstn.auth.entity.enums.UserRoleEntity;
+import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.initializer.PostgresInitializer;
 import com.johncnstn.auth.repository.UserRepository;
@@ -52,11 +52,11 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected UserEntity createUser(User user) {
-        return createUser(user, UserRoleEntity.USER);
+        return createUser(user, UserRoleType.USER);
     }
 
     private UserEntity createUser(User request,
-                                  UserRoleEntity role) {
+                                  UserRoleType role) {
         var userEntity = USER_MAPPER.toEntity(request);
         userEntity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         userEntity.setRole(role);
