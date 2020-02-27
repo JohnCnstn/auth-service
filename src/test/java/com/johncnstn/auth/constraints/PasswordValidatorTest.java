@@ -49,7 +49,7 @@ public class PasswordValidatorTest extends AbstractUnitTest {
 
     private void testPasswordValidation(String password, boolean shouldBeValid) {
         // WHEN
-        var isValid = PasswordValidator.isValid(password);
+        var isValid = PasswordValidator.isPasswordValid(password);
 
         // THEN
         assertEquals(shouldBeValid, isValid);
