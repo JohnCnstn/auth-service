@@ -2,10 +2,11 @@ jacoco {
     toolVersion = "0.8.5"
 }
 
-def jacocoSkipFiles = ['com/johncnstn/servicetemplate/TemplateApplication.class',
-                       'com/johncnstn/servicetemplate/generated/*/**',
-                       'com/johncnstn/servicetemplate/config/**',
-                       'com/johncnstn/servicetemplate/exception/**',
+def jacocoSkipFiles = ['com/johncnstn/auth/AuthApplication.class',
+                       'com/johncnstn/auth/generated/*/**',
+                       'com/johncnstn/auth/config/**',
+                       'com/johncnstn/auth/exception/**',
+                       'com/johncnstn/auth/mapper/**',
 ]
 jacocoTestReport {
     reports {

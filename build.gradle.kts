@@ -1,10 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version Versions.kotlin
     id("org.jetbrains.kotlin.plugin.spring") version Versions.kotlin
     id("org.springframework.boot") version Versions.springBoot
+    id("io.spring.dependency-management") version "1.0.8.RELEASE"
     checkstyle
     jacoco
     pmd
@@ -15,7 +15,7 @@ apply(plugin = "io.spring.dependency-management")
 apply(from = "gradle/generate-openapi.gradle.kts")
 apply(from = "gradle/checkstyle.gradle")
 apply(from = "gradle/jacoco.gradle")
-apply(from = "gradle/lombok.gradle.kts")
+apply(from = "gradle/lombok.gradle")
 apply(from = "gradle/mapstruct.gradle")
 
 group = "com.johncnstn"
@@ -42,8 +42,11 @@ dependencies {
     implementation("org.flywaydb:flyway-core:${Versions.flyway}")
     implementation("org.postgresql:postgresql")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-undertow")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude("spring-boot-starter-tomcat")
+    }
     implementation("org.yaml:snakeyaml")
     implementation("org.zalando:problem-spring-web:${Versions.problemSpringWeb}")
 
@@ -56,12 +59,9 @@ dependencies {
 
     // Test dependencies
     testImplementation("com.github.javafaker:javafaker:${Versions.javafaker}")
-    testImplementation("org.awaitility:awaitility:${Versions.awaitility}")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:${Versions.junitJupiterEngine}")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.junit.vintage:junit-vintage-engine")
     }
-    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:testcontainers:${Versions.testcontainers}")
 }
 

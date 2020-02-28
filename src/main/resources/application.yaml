@@ -1,4 +1,9 @@
 ---
+app:
+  jwt:
+    base64-secret: "${APP_JWT_BASE64_SECRET:}"
+    access-token-validity: "86400"    # 1 day in seconds
+    refresh-token-validity: "3888000" # 45 days in seconds
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -12,8 +17,8 @@ server:
 spring:
   profiles: local
   datasource:
-    url: "jdbc:postgresql://localhost:5432/template-backend"
-    username: "template"
-    password: "template"
+    url: "jdbc:postgresql://localhost:5432/auth-backend"
+    username: "auth"
+    password: "auth"
   jpa:
     show-sql: "true"

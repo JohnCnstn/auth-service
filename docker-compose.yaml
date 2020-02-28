@@ -3,10 +3,10 @@ services:
 
   postgres-db:
     image: postgres:11.5-alpine
-    container_name: template-postgres
+    container_name: auth-postgres
     environment:
-      - POSTGRES_USER=template
-      - POSTGRES_PASSWORD=template
-      - POSTGRES_DB=template-backend
+      - POSTGRES_USER=auth
+      - POSTGRES_PASSWORD=auth
+      - POSTGRES_DB=auth-backend
     ports:
       - "5432:5432"
