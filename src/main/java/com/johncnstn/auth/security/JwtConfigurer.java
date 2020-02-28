@@ -7,7 +7,8 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @AllArgsConstructor
-public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+public class JwtConfigurer
+        extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private TokensProvider tokensProvider;
 
@@ -16,5 +17,4 @@ public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
         var customFilter = new JwtFilter(tokensProvider);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
 }

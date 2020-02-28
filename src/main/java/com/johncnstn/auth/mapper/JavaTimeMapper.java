@@ -1,13 +1,12 @@
 package com.johncnstn.auth.mapper;
 
-import org.mapstruct.Mapper;
+import static org.mapstruct.factory.Mappers.getMapper;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-
-import static org.mapstruct.factory.Mappers.getMapper;
+import org.mapstruct.Mapper;
 
 @Mapper
 public interface JavaTimeMapper {
@@ -37,5 +36,4 @@ public interface JavaTimeMapper {
     default Instant toInstant(LocalDate source) {
         return source == null ? null : Instant.from(source.atStartOfDay(ZoneOffset.UTC));
     }
-
 }

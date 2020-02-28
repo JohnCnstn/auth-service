@@ -1,11 +1,10 @@
 package com.johncnstn.auth.security;
 
-import lombok.Getter;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 public class DomainUserDetails implements UserDetails {
@@ -60,5 +59,4 @@ public class DomainUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

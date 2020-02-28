@@ -9,8 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 public class AuthApplication {
 
-	public static void main(final String[] args) {
-		SpringApplication.run(AuthApplication.class, args);
-	}
-
+    public static void main(final String[] args) {
+        SpringApplication.run(AuthApplication.class, args);
+    }
 }

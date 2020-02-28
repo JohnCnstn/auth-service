@@ -1,9 +1,9 @@
 package com.johncnstn.auth.constraints;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.johncnstn.auth.unit.AbstractUnitTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PasswordValidatorTest extends AbstractUnitTest {
 
@@ -54,5 +54,4 @@ public class PasswordValidatorTest extends AbstractUnitTest {
         // THEN
         assertEquals(shouldBeValid, isValid);
     }
-
 }

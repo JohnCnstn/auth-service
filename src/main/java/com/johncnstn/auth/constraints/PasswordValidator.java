@@ -1,24 +1,30 @@
 package com.johncnstn.auth.constraints;
 
-import com.google.common.base.CharMatcher;
-import org.apache.commons.lang3.CharUtils;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
+import com.google.common.base.CharMatcher;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import org.apache.commons.lang3.CharUtils;
 
 public class PasswordValidator implements ConstraintValidator<Password, CharSequence> {
 
     @SuppressWarnings("checkstyle:LineLength")
-    private static final CharMatcher PRINTABLE_MATCHER = CharMatcher.forPredicate(CharUtils::isAsciiPrintable).precomputed();
+    private static final CharMatcher PRINTABLE_MATCHER =
+            CharMatcher.forPredicate(CharUtils::isAsciiPrintable).precomputed();
+
     @SuppressWarnings("checkstyle:LineLength")
-    private static final CharMatcher LOWER_MATCHER = CharMatcher.forPredicate(CharUtils::isAsciiAlphaLower).precomputed();
+    private static final CharMatcher LOWER_MATCHER =
+            CharMatcher.forPredicate(CharUtils::isAsciiAlphaLower).precomputed();
+
     @SuppressWarnings("checkstyle:LineLength")
-    private static final CharMatcher UPPER_MATCHER = CharMatcher.forPredicate(CharUtils::isAsciiAlphaUpper).precomputed();
+    private static final CharMatcher UPPER_MATCHER =
+            CharMatcher.forPredicate(CharUtils::isAsciiAlphaUpper).precomputed();
+
     @SuppressWarnings("checkstyle:LineLength")
-    private static final CharMatcher DIGITS_MATCHER = CharMatcher.forPredicate(CharUtils::isAsciiNumeric).precomputed();
+    private static final CharMatcher DIGITS_MATCHER =
+            CharMatcher.forPredicate(CharUtils::isAsciiNumeric).precomputed();
 
     public static boolean isPasswordValid(CharSequence value) {
         return isNotEmpty(value)
@@ -35,7 +41,5 @@ public class PasswordValidator implements ConstraintValidator<Password, CharSequ
     }
 
     @Override
-    public void initialize(Password constraintAnnotation) {
-    }
-
+    public void initialize(Password constraintAnnotation) {}
 }

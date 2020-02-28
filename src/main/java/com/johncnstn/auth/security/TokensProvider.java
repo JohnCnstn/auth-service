@@ -1,5 +1,11 @@
 package com.johncnstn.auth.security;
 
+import static com.johncnstn.auth.security.JwtTokenType.ACCESS;
+import static com.johncnstn.auth.security.JwtTokenType.REFRESH;
+import static io.jsonwebtoken.SignatureAlgorithm.HS512;
+import static io.jsonwebtoken.io.Decoders.BASE64;
+import static java.lang.System.currentTimeMillis;
+
 import com.johncnstn.auth.config.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -9,6 +15,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -16,19 +28,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.security.Key;
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static com.johncnstn.auth.security.JwtTokenType.ACCESS;
-import static com.johncnstn.auth.security.JwtTokenType.REFRESH;
-import static io.jsonwebtoken.SignatureAlgorithm.HS512;
-import static io.jsonwebtoken.io.Decoders.BASE64;
-import static java.lang.System.currentTimeMillis;
 
 @Slf4j
 @Component
@@ -71,7 +70,7 @@ public class TokensProvider {
         var refreshExpiresIn = new Date(currentTimeMillis + refreshTokenValidityMillis);
         var refreshToken = createToken(userDetails, issuedAt, REFRESH, refreshExpiresIn);
 
-        //TODO @yegor.usoltsev: add handler for ExpiredJwtException
+        // TODO @yegor.usoltsev: add handler for ExpiredJwtException
 
         return JwtTokens.builder()
                 .issuedAt(issuedAt.getTime())
@@ -104,17 +103,26 @@ public class TokensProvider {
         var role = DomainGrantedAuthority.fromAuthority(claims.get(ROLE_KEY, String.class));
         var userId = UUID.fromString(claims.getSubject());
         var userDetails = new DomainUserDetails(userId, role);
-        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, token, userDetails.getAuthorities());
     }
 
     public boolean validateAccessToken(String token) {
-        return validateToken(() ->
-                Jwts.parser().require(TYPE_KEY, ACCESS.getValue()).setSigningKey(key).parseClaimsJws(token));
+        return validateToken(
+                () ->
+                        Jwts.parser()
+                                .require(TYPE_KEY, ACCESS.getValue())
+                                .setSigningKey(key)
+                                .parseClaimsJws(token));
     }
 
     public boolean validateRefreshToken(String token) {
-        return validateToken(() ->
-                Jwts.parser().require(TYPE_KEY, REFRESH.getValue()).setSigningKey(key).parseClaimsJws(token));
+        return validateToken(
+                () ->
+                        Jwts.parser()
+                                .require(TYPE_KEY, REFRESH.getValue())
+                                .setSigningKey(key)
+                                .parseClaimsJws(token));
     }
 
     private boolean validateToken(Supplier<Jws<Claims>> supplier) {
@@ -135,7 +143,8 @@ public class TokensProvider {
         return false;
     }
 
-    private String createToken(DomainUserDetails userDetails, Date issuedAt, JwtTokenType type, Date expiresIn) {
+    private String createToken(
+            DomainUserDetails userDetails, Date issuedAt, JwtTokenType type, Date expiresIn) {
         var builder = Jwts.builder();
         if (userDetails.getUserId() != null) {
             builder.setSubject(userDetails.getUserId().toString());
@@ -151,7 +160,8 @@ public class TokensProvider {
     private Claims getClaims(String accessToken, boolean ignoreExpired) {
         Claims accessTokenClaims;
         try {
-            accessTokenClaims = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
+            accessTokenClaims =
+                    Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             if (ignoreExpired) {
                 accessTokenClaims = e.getClaims();
@@ -167,7 +177,7 @@ public class TokensProvider {
                 || Objects.equals(REFRESH.getValue(), refreshTokenClaims.get(TYPE_KEY))
                 || Objects.equals(accessTokenClaims.getIssuedAt(), refreshTokenClaims.getIssuedAt())
                 || Objects.equals(accessTokenClaims.getSubject(), refreshTokenClaims.getSubject())
-                || Objects.equals(accessTokenClaims.get(ROLE_KEY), refreshTokenClaims.get(ROLE_KEY));
+                || Objects.equals(
+                        accessTokenClaims.get(ROLE_KEY), refreshTokenClaims.get(ROLE_KEY));
     }
-
 }

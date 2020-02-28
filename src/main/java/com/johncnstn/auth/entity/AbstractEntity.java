@@ -1,19 +1,18 @@
 package com.johncnstn.auth.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import static java.time.Instant.now;
 
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import java.time.Instant;
-
-import static java.time.Instant.now;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -41,5 +40,4 @@ public abstract class AbstractEntity {
     public void onPreUpdate() {
         setUpdatedAt(now());
     }
-
 }

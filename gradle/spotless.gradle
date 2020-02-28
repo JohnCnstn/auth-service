@@ -1,0 +1,11 @@
+apply plugin: 'java'
+
+spotless {
+    java {
+        target project.fileTree(project.rootDir) {
+            include '**/*.java'
+            exclude '**/*/generated/**/*.*'
+        }
+        googleJavaFormat('1.7').aosp()
+    }
+}

@@ -1,7 +1,11 @@
 package com.johncnstn.auth.api;
 
+import static com.johncnstn.auth.util.VersionUtils.getAppVersion;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
@@ -11,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.util.Map;
-
-import static com.johncnstn.auth.util.VersionUtils.getAppVersion;
-
 @Controller
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class OpenapiController {
@@ -23,13 +22,13 @@ public class OpenapiController {
     public static final String OPENAPI_UI_REDIRECT_PATH = "/";
 
     public static final String GET_UI_CONFIGURATION_PATH = "/swagger-resources/configuration/ui";
-    public static final String GET_SECURITY_CONFIGURATION_PATH = "/swagger-resources/configuration/security";
+    public static final String GET_SECURITY_CONFIGURATION_PATH =
+            "/swagger-resources/configuration/security";
     public static final String GET_CONFIGURATION_PATH = "/swagger-resources";
 
     public static final String GET_OPENAPI_YAML_PATH = "/openapi.yaml";
     public static final String GET_OPENAPI_YML_PATH = "/openapi.yml";
     public static final String GET_OPENAPI_JSON_PATH = "/openapi.json";
-
 
     private final String uiConfigurationJson;
     private final String securityConfigurationJson;
@@ -39,18 +38,22 @@ public class OpenapiController {
 
     @SneakyThrows
     @SuppressWarnings("checkstyle:LineLength")
-    public OpenapiController(ObjectMapper objectMapper,
-                             ResourceLoader resourceLoader,
-                             Yaml yaml) {
-        Map<String, Object> openapiSpec = yaml.load(
-                resourceLoader.getResource("classpath:/openapi/openapi.yaml").getInputStream());
+    public OpenapiController(ObjectMapper objectMapper, ResourceLoader resourceLoader, Yaml yaml) {
+        Map<String, Object> openapiSpec =
+                yaml.load(
+                        resourceLoader
+                                .getResource("classpath:/openapi/openapi.yaml")
+                                .getInputStream());
 
-        var configurationUiJson = loadJson(
-                objectMapper, resourceLoader, "classpath:/openapi/configuration-ui.json");
-        var configurationSecurityJson = loadJson(
-                objectMapper, resourceLoader, "classpath:/openapi/configuration-security.json");
-        var configurationJson = loadJson(
-                objectMapper, resourceLoader, "classpath:/openapi/configuration.json");
+        var configurationUiJson =
+                loadJson(objectMapper, resourceLoader, "classpath:/openapi/configuration-ui.json");
+        var configurationSecurityJson =
+                loadJson(
+                        objectMapper,
+                        resourceLoader,
+                        "classpath:/openapi/configuration-security.json");
+        var configurationJson =
+                loadJson(objectMapper, resourceLoader, "classpath:/openapi/configuration.json");
 
         var openapiYaml = populateVersion(openapiSpec);
         this.uiConfigurationJson = objectMapper.writeValueAsString(configurationUiJson);
@@ -84,7 +87,9 @@ public class OpenapiController {
     }
 
     @ResponseBody
-    @GetMapping(value = {GET_OPENAPI_YAML_PATH, GET_OPENAPI_YML_PATH}, produces = "text/yaml")
+    @GetMapping(
+            value = {GET_OPENAPI_YAML_PATH, GET_OPENAPI_YML_PATH},
+            produces = "text/yaml")
     public String getOpenapiYaml() {
         return openapiYaml;
     }
@@ -104,10 +109,11 @@ public class OpenapiController {
         return openapiYaml;
     }
 
-    private JsonNode loadJson(final ObjectMapper objectMapper,
-                              final ResourceLoader resourceLoader,
-                              final String location) throws IOException {
+    private JsonNode loadJson(
+            final ObjectMapper objectMapper,
+            final ResourceLoader resourceLoader,
+            final String location)
+            throws IOException {
         return objectMapper.readTree(resourceLoader.getResource(location).getInputStream());
     }
-
 }
