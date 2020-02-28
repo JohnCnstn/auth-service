@@ -7,7 +7,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class PostgresInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class PostgresInitializer
+        implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     private static final int POSTGRES_PORT = 5432;
 
@@ -42,16 +43,18 @@ public class PostgresInitializer implements ApplicationContextInitializer<Config
 
     private void applyProperties(ConfigurableApplicationContext applicationContext) {
         TestPropertyValues.of(
-                "spring.datasource.url:" + getUrl(),
-                "spring.datasource.username:" + POSTGRES_USER,
-                "spring.datasource.password:" + POSTGRES_PASSWORD
-        ).applyTo(applicationContext);
+                        "spring.datasource.url:" + getUrl(),
+                        "spring.datasource.username:" + POSTGRES_USER,
+                        "spring.datasource.password:" + POSTGRES_PASSWORD)
+                .applyTo(applicationContext);
     }
 
     private static String getUrl() {
-        return "jdbc:postgresql:" + UriComponentsBuilder.newInstance()
-                .host(getHost()).port(getPort()).path(POSTGRES_DB)
-                .toUriString();
+        return "jdbc:postgresql:"
+                + UriComponentsBuilder.newInstance()
+                        .host(getHost())
+                        .port(getPort())
+                        .path(POSTGRES_DB)
+                        .toUriString();
     }
-
 }

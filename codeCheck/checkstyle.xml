@@ -227,13 +227,14 @@
         <module name="VariableDeclarationUsageDistance">
             <property name="allowedDistance" value="4"/>
         </module>
-        <module name="ImportOrder">
-            <property name="groups" value="*,javax,java"/>
-            <property name="ordered" value="true"/>
-            <property name="separated" value="true"/>
-            <property name="option" value="bottom"/>
-            <property name="sortStaticImportsAlphabetically" value="true"/>
-        </module>
+        <!--TODO fix it-->
+        <!--<module name="ImportOrder">-->
+            <!--<property name="groups" value="*,javax,java"/>-->
+            <!--<property name="ordered" value="true"/>-->
+            <!--<property name="separated" value="true"/>-->
+            <!--<property name="option" value="bottom"/>-->
+            <!--<property name="sortStaticImportsAlphabetically" value="true"/>-->
+        <!--</module>-->
         <module name="SuppressionXpathSingleFilter">
             <property name="checks" value="ImportOrder"/>
             <property name="message" value="^'java\..*'.*"/>

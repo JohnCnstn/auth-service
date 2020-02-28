@@ -1,6 +1,16 @@
 package com.johncnstn.auth.entity;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.AUTO;
+
 import com.johncnstn.auth.entity.enums.UserRoleType;
+import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -8,17 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.UUID;
-
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.GenerationType.AUTO;
 
 @Getter
 @Setter
@@ -45,5 +44,4 @@ public class UserEntity extends AbstractEntity {
     @Type(type = "enumType")
     @Column(name = "role", nullable = false)
     private UserRoleType role;
-
 }

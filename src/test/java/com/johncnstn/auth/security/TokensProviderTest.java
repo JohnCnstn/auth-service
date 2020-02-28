@@ -1,16 +1,5 @@
 package com.johncnstn.auth.security;
 
-import com.johncnstn.auth.config.AppProperties;
-import com.johncnstn.auth.unit.AbstractUnitTest;
-import io.jsonwebtoken.Jwts;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-
 import static com.johncnstn.auth.security.DomainGrantedAuthority.USER;
 import static com.johncnstn.auth.security.JwtTokenType.ACCESS;
 import static com.johncnstn.auth.security.JwtTokenType.REFRESH;
@@ -20,6 +9,16 @@ import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 import static java.lang.System.currentTimeMillis;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import com.johncnstn.auth.config.AppProperties;
+import com.johncnstn.auth.unit.AbstractUnitTest;
+import io.jsonwebtoken.Jwts;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 public class TokensProviderTest extends AbstractUnitTest {
 
@@ -47,19 +46,21 @@ public class TokensProviderTest extends AbstractUnitTest {
         JwtTokens tokens = tokensProvider.createTokens(authentication);
 
         // THEN
-        assertSoftly(it -> {
-            it.assertThat(tokens).isNotNull();
-            it.assertThat(tokens.getIssuedAt()).isGreaterThan(0);
-            it.assertThat(tokens.getIssuedAt()).isLessThanOrEqualTo(currentTimeMillis());
-            it.assertThat(tokens.getAccessToken()).isNotNull();
-            it.assertThat(tokens.getRefreshToken()).isNotNull();
+        assertSoftly(
+                it -> {
+                    it.assertThat(tokens).isNotNull();
+                    it.assertThat(tokens.getIssuedAt()).isGreaterThan(0);
+                    it.assertThat(tokens.getIssuedAt()).isLessThanOrEqualTo(currentTimeMillis());
+                    it.assertThat(tokens.getAccessToken()).isNotNull();
+                    it.assertThat(tokens.getRefreshToken()).isNotNull();
 
-            var expectedAccessExpiresIn = tokens.getIssuedAt() + accessTokenValidityMillis;
-            it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(expectedAccessExpiresIn);
+                    var expectedAccessExpiresIn = tokens.getIssuedAt() + accessTokenValidityMillis;
+                    it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(expectedAccessExpiresIn);
 
-            var expectedRefreshExpiresIn = tokens.getIssuedAt() + refreshTokenValidityMillis;
-            it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(expectedRefreshExpiresIn);
-        });
+                    var expectedRefreshExpiresIn =
+                            tokens.getIssuedAt() + refreshTokenValidityMillis;
+                    it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(expectedRefreshExpiresIn);
+                });
     }
 
     @Test
@@ -68,44 +69,49 @@ public class TokensProviderTest extends AbstractUnitTest {
         var id = randomUUID();
         var issuedAt = new Date();
         var userDetails = new DomainUserDetails(id, USER);
-        var accessToken = createToken(
-                userDetails,
-                issuedAt,
-                ACCESS,
-                Date.from(LocalDate
-                        .of(2020, 5, 10)
-                        .atStartOfDay(ZoneId.systemDefault())
-                        .toInstant()));
+        var accessToken =
+                createToken(
+                        userDetails,
+                        issuedAt,
+                        ACCESS,
+                        Date.from(
+                                LocalDate.of(2020, 5, 10)
+                                        .atStartOfDay(ZoneId.systemDefault())
+                                        .toInstant()));
 
-        var refreshToken = createToken(
-                userDetails,
-                issuedAt,
-                REFRESH,
-                Date.from(LocalDate
-                        .of(2020, 5, 10)
-                        .atStartOfDay(ZoneId.systemDefault())
-                        .toInstant()));
+        var refreshToken =
+                createToken(
+                        userDetails,
+                        issuedAt,
+                        REFRESH,
+                        Date.from(
+                                LocalDate.of(2020, 5, 10)
+                                        .atStartOfDay(ZoneId.systemDefault())
+                                        .toInstant()));
 
         // WHEN
         JwtTokens tokens = tokensProvider.refreshTokens(accessToken, refreshToken);
 
         // THEN
-        assertSoftly(it -> {
-            it.assertThat(tokens).isNotNull();
-            it.assertThat(tokens.getIssuedAt()).isGreaterThan(0);
-            it.assertThat(tokens.getIssuedAt()).isLessThanOrEqualTo(currentTimeMillis());
-            it.assertThat(tokens.getAccessToken()).isNotNull();
-            it.assertThat(tokens.getRefreshToken()).isNotNull();
+        assertSoftly(
+                it -> {
+                    it.assertThat(tokens).isNotNull();
+                    it.assertThat(tokens.getIssuedAt()).isGreaterThan(0);
+                    it.assertThat(tokens.getIssuedAt()).isLessThanOrEqualTo(currentTimeMillis());
+                    it.assertThat(tokens.getAccessToken()).isNotNull();
+                    it.assertThat(tokens.getRefreshToken()).isNotNull();
 
-            var expectedAccessExpiresIn = tokens.getIssuedAt() + accessTokenValidityMillis;
-            it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(expectedAccessExpiresIn);
+                    var expectedAccessExpiresIn = tokens.getIssuedAt() + accessTokenValidityMillis;
+                    it.assertThat(tokens.getAccessExpiresIn()).isEqualTo(expectedAccessExpiresIn);
 
-            var expectedRefreshExpiresIn = tokens.getIssuedAt() + refreshTokenValidityMillis;
-            it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(expectedRefreshExpiresIn);
-        });
+                    var expectedRefreshExpiresIn =
+                            tokens.getIssuedAt() + refreshTokenValidityMillis;
+                    it.assertThat(tokens.getRefreshExpiresIn()).isEqualTo(expectedRefreshExpiresIn);
+                });
     }
 
-    private String createToken(DomainUserDetails userDetails, Date issuedAt, JwtTokenType type, Date expiresIn) {
+    private String createToken(
+            DomainUserDetails userDetails, Date issuedAt, JwtTokenType type, Date expiresIn) {
         var builder = Jwts.builder();
         if (userDetails.getUserId() != null) {
             builder.setSubject(userDetails.getUserId().toString());
@@ -115,8 +121,8 @@ public class TokensProviderTest extends AbstractUnitTest {
         builder.setIssuedAt(issuedAt);
         builder.claim("rol", userDetails.getRole().getAuthority());
         builder.claim("typ", type.getValue());
-        builder.signWith(hmacShaKeyFor(BASE64.decode(appProperties.getJwt().getBase64Secret())), HS512);
+        builder.signWith(
+                hmacShaKeyFor(BASE64.decode(appProperties.getJwt().getBase64Secret())), HS512);
         return builder.compact();
     }
-
 }

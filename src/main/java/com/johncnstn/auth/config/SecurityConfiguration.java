@@ -1,7 +1,13 @@
 package com.johncnstn.auth.config;
 
+import static com.johncnstn.auth.generated.api.AuthApi.*;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 import com.johncnstn.auth.security.JwtConfigurer;
 import com.johncnstn.auth.security.TokensProvider;
+import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
@@ -18,13 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
-
-import javax.annotation.PostConstruct;
-
-import static com.johncnstn.auth.generated.api.AuthApi.*;
-import static org.springframework.http.HttpMethod.OPTIONS;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -58,45 +57,41 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) {
-        web.ignoring()
-                .antMatchers("/")
-                .antMatchers(basePath);
+        web.ignoring().antMatchers("/").antMatchers(basePath);
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf()
+        http.csrf()
                 .disable()
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
-
                 .and()
                 .headers()
                 .frameOptions()
                 .disable()
-
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(STATELESS)
-
                 .and()
                 .apply(securityConfigurerAdapter())
                 .and()
                 .authorizeRequests()
-
-                .antMatchers(POST, signUpPath).permitAll()
-                .antMatchers(POST, signInPath).permitAll()
-                .antMatchers(POST, refreshTokenPath).permitAll()
-
-                .antMatchers(basePath + "/openapi.*").permitAll()
-
-                .antMatchers(OPTIONS, "/**").permitAll()
-                .antMatchers(basePath + "/**").authenticated();
+                .antMatchers(POST, signUpPath)
+                .permitAll()
+                .antMatchers(POST, signInPath)
+                .permitAll()
+                .antMatchers(POST, refreshTokenPath)
+                .permitAll()
+                .antMatchers(basePath + "/openapi.*")
+                .permitAll()
+                .antMatchers(OPTIONS, "/**")
+                .permitAll()
+                .antMatchers(basePath + "/**")
+                .authenticated();
     }
 
     private JwtConfigurer securityConfigurerAdapter() {
         return new JwtConfigurer(tokensProvider);
     }
-
 }

@@ -1,5 +1,10 @@
 package com.johncnstn.auth.service.impl;
 
+import static com.johncnstn.auth.mapper.RoleMapper.ROLE_MAPPER;
+import static com.johncnstn.auth.mapper.TokenMapper.TOKEN_MAPPER;
+import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
+import static org.apache.commons.lang3.StringUtils.lowerCase;
+
 import com.johncnstn.auth.generated.model.RefreshTokenRequest;
 import com.johncnstn.auth.generated.model.SignInRequest;
 import com.johncnstn.auth.generated.model.Token;
@@ -15,11 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.johncnstn.auth.mapper.RoleMapper.ROLE_MAPPER;
-import static com.johncnstn.auth.mapper.TokenMapper.TOKEN_MAPPER;
-import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
-import static org.apache.commons.lang3.StringUtils.lowerCase;
 
 @Slf4j
 @Service
@@ -47,21 +47,22 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public Token signIn(SignInRequest signInRequest) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(
-                lowerCase(signInRequest.getEmail()), signInRequest.getPassword()
-        );
+        var authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        lowerCase(signInRequest.getEmail()), signInRequest.getPassword());
         var authentication = authenticationManager.authenticate(authenticationToken);
-        var token = tokensProvider.createTokens((UsernamePasswordAuthenticationToken) authentication);
+        var token =
+                tokensProvider.createTokens((UsernamePasswordAuthenticationToken) authentication);
         return TOKEN_MAPPER.toModel(token);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Token refreshToken(RefreshTokenRequest refreshTokenRequest) {
-        var token = tokensProvider.refreshTokens(
-                refreshTokenRequest.getAccessToken(), refreshTokenRequest.getRefreshToken()
-        );
+        var token =
+                tokensProvider.refreshTokens(
+                        refreshTokenRequest.getAccessToken(),
+                        refreshTokenRequest.getRefreshToken());
         return TOKEN_MAPPER.toModel(token);
     }
-
 }

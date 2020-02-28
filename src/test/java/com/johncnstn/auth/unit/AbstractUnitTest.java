@@ -9,5 +9,4 @@ public abstract class AbstractUnitTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
     }
-
 }

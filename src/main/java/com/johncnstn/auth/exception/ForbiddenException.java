@@ -8,5 +8,4 @@ public class ForbiddenException extends AbstractThrowableProblem {
     public ForbiddenException(final String message) {
         super(ErrorConstants.FORBIDDEN, "Forbidden", Status.FORBIDDEN, message);
     }
-
 }

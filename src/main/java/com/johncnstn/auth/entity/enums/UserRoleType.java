@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum UserRoleType {
-
-    USER("USER"), ADMIN("ADMIN");
+    USER("USER"),
+    ADMIN("ADMIN");
 
     private String value;
 
@@ -28,5 +28,4 @@ public enum UserRoleType {
         }
         return null;
     }
-
 }

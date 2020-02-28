@@ -8,5 +8,4 @@ public class NotFoundException extends AbstractThrowableProblem {
     public NotFoundException(final String message) {
         super(ErrorConstants.NOT_FOUND, "Not Found", Status.NOT_FOUND, message);
     }
-
 }

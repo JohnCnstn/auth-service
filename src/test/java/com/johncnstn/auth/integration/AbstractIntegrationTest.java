@@ -1,5 +1,8 @@
 package com.johncnstn.auth.integration;
 
+import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
+import static com.johncnstn.auth.security.JwtFilter.TOKEN_PREFIX;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.johncnstn.auth.entity.UserEntity;
 import com.johncnstn.auth.entity.enums.UserRoleType;
@@ -19,32 +22,22 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
-import static com.johncnstn.auth.security.JwtFilter.TOKEN_PREFIX;
-
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@ContextConfiguration(initializers = {
-        PostgresInitializer.class
-})
+@ContextConfiguration(initializers = {PostgresInitializer.class})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractIntegrationTest {
 
-    @Autowired
-    protected MockMvc mockMvc;
+    @Autowired protected MockMvc mockMvc;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+    @Autowired protected ObjectMapper objectMapper;
 
-    @Autowired
-    protected TokensProvider tokensProvider;
+    @Autowired protected TokensProvider tokensProvider;
 
-    @Autowired
-    protected UserRepository userRepository;
+    @Autowired protected UserRepository userRepository;
 
-    @Autowired
-    protected PasswordEncoder passwordEncoder;
+    @Autowired protected PasswordEncoder passwordEncoder;
 
     @AfterEach
     public void clearDatabase() {
@@ -55,8 +48,7 @@ public abstract class AbstractIntegrationTest {
         return createUser(user, UserRoleType.USER);
     }
 
-    private UserEntity createUser(User request,
-                                  UserRoleType role) {
+    private UserEntity createUser(User request, UserRoleType role) {
         var userEntity = USER_MAPPER.toEntity(request);
         userEntity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         userEntity.setRole(role);
@@ -71,5 +63,4 @@ public abstract class AbstractIntegrationTest {
         var details = USER_MAPPER.toUserDetails(entity);
         return tokensProvider.createTokens(details);
     }
-
 }

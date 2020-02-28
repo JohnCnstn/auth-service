@@ -14,5 +14,4 @@ public class YamlConfiguration {
         options.setAllowDuplicateKeys(false);
         return new Yaml(options);
     }
-
 }

@@ -13,5 +13,4 @@ public interface AuthService {
     Token signIn(SignInRequest signInRequest);
 
     Token refreshToken(RefreshTokenRequest refreshTokenRequest);
-
 }

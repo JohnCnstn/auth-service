@@ -16,5 +16,4 @@ public class JwtTokens {
     private final String refreshToken;
     private final long refreshExpiresIn;
     private final DomainUserDetails userDetails;
-
 }
