@@ -10,8 +10,7 @@ import static org.mockito.Mockito.when;
 import com.johncnstn.auth.entity.UserEntity;
 import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.generated.model.SignInRequest;
-import com.johncnstn.auth.generated.model.User;
-import com.johncnstn.auth.generated.model.UserRole;
+import com.johncnstn.auth.generated.model.SignUpRequest;
 import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.security.DomainGrantedAuthority;
 import com.johncnstn.auth.security.DomainUserDetails;
@@ -41,25 +40,25 @@ public class AuthServiceTest extends AbstractUnitTest {
     @Test
     public void signUp() {
         // GIVEN
-        var rawUser = new User();
-        rawUser.setEmail("test@mail.com");
-        rawUser.setPassword("demo123");
+        var signUpRequest = new SignUpRequest();
+        signUpRequest.setEmail("test@mail.com");
+        signUpRequest.setPassword("demo123");
 
         var entityToReturn =
-                new UserEntity(randomUUID(), rawUser.getEmail(), "xyz", UserRoleType.USER);
+                new UserEntity(randomUUID(), signUpRequest.getEmail(), "xyz", UserRoleType.USER);
 
         when(passwordEncoder.encode(any())).thenReturn(any());
-        when(userRepository.findByEmail(rawUser.getEmail())).thenReturn(entityToReturn);
+        when(userRepository.findByEmail(signUpRequest.getEmail())).thenReturn(entityToReturn);
 
         // WHEN
-        var user = authService.signUp(rawUser, UserRole.USER);
+        var user = authService.signUp(signUpRequest);
 
         // THEN
         assertSoftly(
                 it -> {
                     it.assertThat(user).isNotNull();
                     it.assertThat(user.getId()).isNotNull();
-                    it.assertThat(user.getEmail()).isEqualTo(rawUser.getEmail());
+                    it.assertThat(user.getEmail()).isEqualTo(signUpRequest.getEmail());
                 });
 
         verify(userRepository).save(any());

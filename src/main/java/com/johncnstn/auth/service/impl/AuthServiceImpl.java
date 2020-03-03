@@ -1,12 +1,15 @@
 package com.johncnstn.auth.service.impl;
 
+import static com.johncnstn.auth.generated.model.UserRole.USER;
 import static com.johncnstn.auth.mapper.RoleMapper.ROLE_MAPPER;
 import static com.johncnstn.auth.mapper.TokenMapper.TOKEN_MAPPER;
 import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 
+import com.johncnstn.auth.entity.UserEntity;
 import com.johncnstn.auth.generated.model.RefreshTokenRequest;
 import com.johncnstn.auth.generated.model.SignInRequest;
+import com.johncnstn.auth.generated.model.SignUpRequest;
 import com.johncnstn.auth.generated.model.Token;
 import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.generated.model.UserRole;
@@ -33,23 +36,27 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public User signUp(User user, UserRole userRole) {
-        var userEntity = USER_MAPPER.toEntity(user);
-        var role = ROLE_MAPPER.toType(userRole);
-        userEntity.setPasswordHash(passwordEncoder.encode(user.getPassword()));
-        userEntity.setEmail(lowerCase(user.getEmail()));
-        userEntity.setRole(role);
+    public User signUp(SignUpRequest request) {
+        return signUp(request, USER);
+    }
+
+    private User signUp(SignUpRequest request, UserRole role) {
+        var userEntity = new UserEntity();
+        var roleType = ROLE_MAPPER.toType(role);
+        userEntity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        userEntity.setEmail(lowerCase(request.getEmail()));
+        userEntity.setRole(roleType);
         userRepository.save(userEntity);
-        var savedUser = userRepository.findByEmail(user.getEmail());
+        var savedUser = userRepository.findByEmail(request.getEmail());
         return USER_MAPPER.toModel(savedUser);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Token signIn(SignInRequest signInRequest) {
+    public Token signIn(SignInRequest request) {
         var authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                        lowerCase(signInRequest.getEmail()), signInRequest.getPassword());
+                        lowerCase(request.getEmail()), request.getPassword());
         var authentication = authenticationManager.authenticate(authenticationToken);
         var token =
                 tokensProvider.createTokens((UsernamePasswordAuthenticationToken) authentication);
