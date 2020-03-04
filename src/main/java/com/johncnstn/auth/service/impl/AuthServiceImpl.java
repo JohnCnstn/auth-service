@@ -14,12 +14,14 @@ import com.johncnstn.auth.generated.model.Token;
 import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.generated.model.UserRole;
 import com.johncnstn.auth.repository.UserRepository;
-import com.johncnstn.auth.security.TokensProvider;
+import com.johncnstn.auth.security.JwtTokens;
+import com.johncnstn.auth.security.TokenProvider;
 import com.johncnstn.auth.service.AuthService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final TokensProvider tokensProvider;
+    private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
     @Override
@@ -42,34 +44,58 @@ public class AuthServiceImpl implements AuthService {
 
     private User signUp(SignUpRequest request, UserRole role) {
         var userEntity = new UserEntity();
+        var passwordHash = hashPassword(request.getPassword());
+        userEntity.setPasswordHash(passwordHash);
+        var email = prepareEmail(request.getEmail());
+        userEntity.setEmail(email);
         var roleType = ROLE_MAPPER.toType(role);
-        userEntity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        userEntity.setEmail(lowerCase(request.getEmail()));
         userEntity.setRole(roleType);
         userRepository.save(userEntity);
-        var savedUser = userRepository.findByEmail(request.getEmail());
-        return USER_MAPPER.toModel(savedUser);
+        var savedEntity = userRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+        return USER_MAPPER.toModel(savedEntity);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Token signIn(SignInRequest request) {
-        var authenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                        lowerCase(request.getEmail()), request.getPassword());
-        var authentication = authenticationManager.authenticate(authenticationToken);
-        var token =
-                tokensProvider.createTokens((UsernamePasswordAuthenticationToken) authentication);
+        var email = prepareEmail(request.getEmail());
+        var password = request.getPassword();
+        var authToken = buildAuthToken(email, password);
+        var authentication = authenticate(authToken);
+        var token = createTokens(authentication);
         return TOKEN_MAPPER.toModel(token);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Token refreshToken(RefreshTokenRequest refreshTokenRequest) {
-        var token =
-                tokensProvider.refreshTokens(
-                        refreshTokenRequest.getAccessToken(),
-                        refreshTokenRequest.getRefreshToken());
+    public Token refreshToken(RefreshTokenRequest request) {
+        var accessToken = request.getAccessToken();
+        var refreshToken = request.getRefreshToken();
+        var token = refreshTokens(accessToken, refreshToken);
         return TOKEN_MAPPER.toModel(token);
+    }
+
+    private String hashPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    private String prepareEmail(String rawEmail) {
+        return lowerCase(rawEmail);
+    }
+
+    private Authentication buildAuthToken(String email, String password) {
+        return new UsernamePasswordAuthenticationToken(email, password);
+    }
+
+    private Authentication authenticate(Authentication authToken) {
+        return authenticationManager.authenticate(authToken);
+    }
+
+    private JwtTokens createTokens(Authentication authentication) {
+        return tokenProvider.createTokens((UsernamePasswordAuthenticationToken) authentication);
+    }
+
+    private JwtTokens refreshTokens(String accessToken, String refreshToken) {
+        return tokenProvider.refreshTokens(accessToken, refreshToken);
     }
 }

@@ -15,9 +15,10 @@ import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.security.DomainGrantedAuthority;
 import com.johncnstn.auth.security.DomainUserDetails;
 import com.johncnstn.auth.security.JwtTokens;
-import com.johncnstn.auth.security.TokensProvider;
+import com.johncnstn.auth.security.TokenProvider;
 import com.johncnstn.auth.service.impl.AuthServiceImpl;
 import com.johncnstn.auth.unit.AbstractUnitTest;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,7 +32,7 @@ public class AuthServiceTest extends AbstractUnitTest {
 
     @Mock private PasswordEncoder passwordEncoder;
 
-    @Mock private TokensProvider tokensProvider;
+    @Mock private TokenProvider tokenProvider;
 
     @Mock private UserRepository userRepository;
 
@@ -48,7 +49,8 @@ public class AuthServiceTest extends AbstractUnitTest {
                 new UserEntity(randomUUID(), signUpRequest.getEmail(), "xyz", UserRoleType.USER);
 
         when(passwordEncoder.encode(any())).thenReturn(any());
-        when(userRepository.findByEmail(signUpRequest.getEmail())).thenReturn(entityToReturn);
+        when(userRepository.findByEmail(signUpRequest.getEmail()))
+                .thenReturn(Optional.of(entityToReturn));
 
         // WHEN
         var user = authService.signUp(signUpRequest);
@@ -86,7 +88,7 @@ public class AuthServiceTest extends AbstractUnitTest {
                         .userDetails(principal)
                         .build();
 
-        when(tokensProvider.createTokens(authentication)).thenReturn(tokensToReturn);
+        when(tokenProvider.createTokens(authentication)).thenReturn(tokensToReturn);
 
         // WHEN
         var token = authService.signIn(request);

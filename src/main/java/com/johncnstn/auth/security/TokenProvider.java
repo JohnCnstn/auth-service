@@ -2,8 +2,10 @@ package com.johncnstn.auth.security;
 
 import static com.johncnstn.auth.security.JwtTokenType.ACCESS;
 import static com.johncnstn.auth.security.JwtTokenType.REFRESH;
+import static com.johncnstn.auth.util.ConvertUtils.secsToMillis;
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 import static io.jsonwebtoken.io.Decoders.BASE64;
+import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 import static java.lang.System.currentTimeMillis;
 
 import com.johncnstn.auth.config.AppProperties;
@@ -14,7 +16,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
 import java.util.Objects;
@@ -32,7 +33,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TokensProvider {
+public class TokenProvider {
 
     private static final String ROLE_KEY = "rol";
     private static final String TYPE_KEY = "typ";
@@ -45,9 +46,15 @@ public class TokensProvider {
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(BASE64.decode(appProperties.getJwt().getBase64Secret()));
-        this.accessTokenValidityMillis = appProperties.getJwt().getAccessTokenValidity() * 1000;
-        this.refreshTokenValidityMillis = appProperties.getJwt().getRefreshTokenValidity() * 1000;
+        var base64Secret = appProperties.getJwt().getBase64Secret();
+        var plainSecret = BASE64.decode(base64Secret);
+        this.key = hmacShaKeyFor(plainSecret);
+
+        var accessTokenValiditySecs = appProperties.getJwt().getAccessTokenValidity();
+        this.accessTokenValidityMillis = secsToMillis(accessTokenValiditySecs);
+
+        var refreshTokenValiditySecs = appProperties.getJwt().getRefreshTokenValidity();
+        this.refreshTokenValidityMillis = secsToMillis(refreshTokenValiditySecs);
     }
 
     public JwtTokens createTokens(UsernamePasswordAuthenticationToken authentication) {
@@ -64,13 +71,13 @@ public class TokensProvider {
         var currentTimeMillis = currentTimeMillis();
         var issuedAt = new Date(currentTimeMillis);
 
-        var accessExpiresIn = new Date(currentTimeMillis + accessTokenValidityMillis);
+        var accessExpiresInMillis = currentTimeMillis + accessTokenValidityMillis;
+        var accessExpiresIn = new Date(accessExpiresInMillis);
         var accessToken = createToken(userDetails, issuedAt, ACCESS, accessExpiresIn);
 
-        var refreshExpiresIn = new Date(currentTimeMillis + refreshTokenValidityMillis);
+        var refreshExpiresInMillis = currentTimeMillis + refreshTokenValidityMillis;
+        var refreshExpiresIn = new Date(refreshExpiresInMillis);
         var refreshToken = createToken(userDetails, issuedAt, REFRESH, refreshExpiresIn);
-
-        // TODO @yegor.usoltsev: add handler for ExpiredJwtException
 
         return JwtTokens.builder()
                 .issuedAt(issuedAt.getTime())
@@ -85,7 +92,7 @@ public class TokensProvider {
     public JwtTokens refreshTokens(String accessToken, String refreshToken) {
         var accessTokenClaims = getClaims(accessToken, true);
         var refreshTokenClaims = getClaims(refreshToken, false);
-        if (!validateClaimsAreSame(accessTokenClaims, refreshTokenClaims)) {
+        if (!isValidClaims(accessTokenClaims, refreshTokenClaims)) {
             throw new BadCredentialsException("Bad credentials");
         }
         var authentication = getAuthentication(refreshToken);
@@ -145,6 +152,7 @@ public class TokensProvider {
 
     private String createToken(
             DomainUserDetails userDetails, Date issuedAt, JwtTokenType type, Date expiresIn) {
+
         var builder = Jwts.builder();
         if (userDetails.getUserId() != null) {
             builder.setSubject(userDetails.getUserId().toString());
@@ -172,12 +180,11 @@ public class TokensProvider {
         return accessTokenClaims;
     }
 
-    private boolean validateClaimsAreSame(Claims accessTokenClaims, Claims refreshTokenClaims) {
-        return Objects.equals(accessTokenClaims.get(TYPE_KEY), ACCESS.getValue())
-                || Objects.equals(REFRESH.getValue(), refreshTokenClaims.get(TYPE_KEY))
-                || Objects.equals(accessTokenClaims.getIssuedAt(), refreshTokenClaims.getIssuedAt())
-                || Objects.equals(accessTokenClaims.getSubject(), refreshTokenClaims.getSubject())
-                || Objects.equals(
-                        accessTokenClaims.get(ROLE_KEY), refreshTokenClaims.get(ROLE_KEY));
+    private boolean isValidClaims(Claims accessClaims, Claims refreshClaims) {
+        return Objects.equals(accessClaims.get(TYPE_KEY), ACCESS.getValue())
+                && Objects.equals(REFRESH.getValue(), refreshClaims.get(TYPE_KEY))
+                && Objects.equals(accessClaims.getIssuedAt(), refreshClaims.getIssuedAt())
+                && Objects.equals(accessClaims.getSubject(), refreshClaims.getSubject())
+                && Objects.equals(accessClaims.get(ROLE_KEY), refreshClaims.get(ROLE_KEY));
     }
 }

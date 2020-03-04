@@ -70,8 +70,8 @@ class AuthApiControllerTest : AbstractIntegrationTest() {
 
         // THEN
         assertSoftly {
-            it.assertThat(tokensProvider.validateAccessToken(body.accessToken)).isTrue
-            it.assertThat(tokensProvider.validateRefreshToken(body.refreshToken)).isTrue
+            it.assertThat(tokenProvider.validateAccessToken(body.accessToken)).isTrue
+            it.assertThat(tokenProvider.validateRefreshToken(body.refreshToken)).isTrue
             it.assertThat(body.issuedAt).isGreaterThan(oldTokens.issuedAt)
             it.assertThat(body.accessExpiresIn).isGreaterThan(oldTokens.accessExpiresIn)
             it.assertThat(body.refreshExpiresIn).isGreaterThan(oldTokens.refreshExpiresIn)
@@ -102,8 +102,8 @@ class AuthApiControllerTest : AbstractIntegrationTest() {
 
     private fun assertToken(actual: Token) {
         assertSoftly {
-            it.assertThat(tokensProvider.validateAccessToken(actual.accessToken)).isTrue
-            it.assertThat(tokensProvider.validateRefreshToken(actual.refreshToken)).isTrue
+            it.assertThat(tokenProvider.validateAccessToken(actual.accessToken)).isTrue
+            it.assertThat(tokenProvider.validateRefreshToken(actual.refreshToken)).isTrue
             it.assertThat(actual.issuedAt).isLessThan(currentTimeMillis())
             it.assertThat(actual.accessExpiresIn).isGreaterThan(currentTimeMillis())
             it.assertThat(actual.refreshExpiresIn).isGreaterThan(currentTimeMillis())

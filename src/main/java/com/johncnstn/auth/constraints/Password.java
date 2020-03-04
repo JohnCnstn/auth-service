@@ -11,11 +11,11 @@ import javax.validation.ReportAsSingleViolation;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Constraint(validatedBy = PasswordValidator.class)
 @NotBlank
-@ReportAsSingleViolation
 @Retention(RUNTIME)
+@ReportAsSingleViolation
 @Size(min = 6, max = 256)
+@Constraint(validatedBy = PasswordValidator.class)
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
 public @interface Password {
 

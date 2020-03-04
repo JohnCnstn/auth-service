@@ -1,6 +1,6 @@
 package com.johncnstn.auth.config;
 
-import static com.johncnstn.auth.util.RandomUtilKt.generateBase64Secret;
+import static com.johncnstn.auth.util.RandomUtils.generateBase64Secret;
 
 import javax.validation.constraints.PositiveOrZero;
 import lombok.Getter;

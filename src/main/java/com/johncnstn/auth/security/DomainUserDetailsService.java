@@ -1,12 +1,12 @@
 package com.johncnstn.auth.security;
 
+import static com.johncnstn.auth.exception.ExceptionUtils.usernameNotFound;
 import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
 
 import com.johncnstn.auth.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @AllArgsConstructor
 public class DomainUserDetailsService implements UserDetailsService {
+
+    private static final String NOT_FOUND_MESSAGE_TEMPLATE =
+            "User with email %s was not found in the database";
 
     private final UserRepository userRepository;
 
@@ -24,14 +27,13 @@ public class DomainUserDetailsService implements UserDetailsService {
     }
 
     private DomainUserDetails loadUserByEmail(String email) {
+        return userRepository
+                .findByEmail(email)
+                .map(USER_MAPPER::toUserDetails)
+                .orElseThrow(usernameNotFound(notFoundMessage(email)));
+    }
 
-        // FIXME change with extension of user's dao
-
-        var entity = userRepository.findByEmail(email);
-        if (entity == null) {
-            throw new UsernameNotFoundException(
-                    "User with email " + email + " was not found in the database");
-        }
-        return USER_MAPPER.toUserDetails(entity);
+    private String notFoundMessage(String email) {
+        return String.format(NOT_FOUND_MESSAGE_TEMPLATE, email);
     }
 }
