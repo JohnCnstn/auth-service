@@ -21,19 +21,19 @@ public class AuthApiController implements AuthApi {
 
     @Override
     public ResponseEntity<Token> refreshToken(@Valid RefreshTokenRequest request) {
-        var result = authService.refreshToken(request);
-        return ResponseEntity.ok(result);
+        var response = authService.refreshToken(request);
+        return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<Token> signIn(@Valid SignInRequest request) {
-        var result = authService.signIn(request);
-        return ResponseEntity.ok(result);
+        var response = authService.signIn(request);
+        return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<User> signUp(@Valid SignUpRequest request) {
-        var result = authService.signUp(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        var response = authService.signUp(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

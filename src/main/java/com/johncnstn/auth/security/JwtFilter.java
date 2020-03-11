@@ -32,7 +32,7 @@ public class JwtFilter extends GenericFilterBean {
 
         var httpServletRequest = (HttpServletRequest) servletRequest;
         var token = resolveToken(httpServletRequest);
-        if (isValidAccessToken(token)) {
+        if (isValidToken(token)) {
             var authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -40,7 +40,7 @@ public class JwtFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private boolean isValidAccessToken(String token) {
+    private boolean isValidToken(String token) {
         return isNotEmpty(token) && tokenProvider.validateAccessToken(token);
     }
 

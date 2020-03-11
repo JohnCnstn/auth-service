@@ -18,7 +18,6 @@ import com.johncnstn.auth.security.JwtTokens;
 import com.johncnstn.auth.security.TokenProvider;
 import com.johncnstn.auth.service.impl.AuthServiceImpl;
 import com.johncnstn.auth.unit.AbstractUnitTest;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,9 +47,8 @@ public class AuthServiceTest extends AbstractUnitTest {
         var entityToReturn =
                 new UserEntity(randomUUID(), signUpRequest.getEmail(), "xyz", UserRoleType.USER);
 
-        when(passwordEncoder.encode(any())).thenReturn(any());
-        when(userRepository.findByEmail(signUpRequest.getEmail()))
-                .thenReturn(Optional.of(entityToReturn));
+        when(passwordEncoder.encode(any())).thenReturn("hashed");
+        when(userRepository.save(any())).thenReturn(entityToReturn);
 
         // WHEN
         var user = authService.signUp(signUpRequest);
@@ -64,7 +62,6 @@ public class AuthServiceTest extends AbstractUnitTest {
                 });
 
         verify(userRepository).save(any());
-        verify(userRepository).findByEmail(any());
     }
 
     @Test

@@ -15,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class DomainUserDetailsService implements UserDetailsService {
 
-    private static final String NOT_FOUND_MESSAGE_TEMPLATE =
-            "User with email %s was not found in the database";
-
     private final UserRepository userRepository;
 
     @Override
@@ -30,10 +27,10 @@ public class DomainUserDetailsService implements UserDetailsService {
         return userRepository
                 .findByEmail(email)
                 .map(USER_MAPPER::toUserDetails)
-                .orElseThrow(usernameNotFound(notFoundMessage(email)));
-    }
-
-    private String notFoundMessage(String email) {
-        return String.format(NOT_FOUND_MESSAGE_TEMPLATE, email);
+                .orElseThrow(
+                        usernameNotFound(
+                                String.format(
+                                        "User with email %s was not found in the database",
+                                        email)));
     }
 }

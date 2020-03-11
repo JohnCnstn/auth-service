@@ -43,15 +43,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private User signUp(SignUpRequest request, UserRole role) {
-        var userEntity = new UserEntity();
         var passwordHash = hashPassword(request.getPassword());
-        userEntity.setPasswordHash(passwordHash);
         var email = prepareEmail(request.getEmail());
-        userEntity.setEmail(email);
         var roleType = ROLE_MAPPER.toType(role);
+        var userEntity = new UserEntity();
+        userEntity.setPasswordHash(passwordHash);
+        userEntity.setEmail(email);
         userEntity.setRole(roleType);
-        userRepository.save(userEntity);
-        var savedEntity = userRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+        var savedEntity = userRepository.save(userEntity);
         return USER_MAPPER.toModel(savedEntity);
     }
 
