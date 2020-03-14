@@ -1,10 +1,10 @@
 package com.johncnstn.auth.api;
 
 import com.johncnstn.auth.generated.api.AuthApi;
+import com.johncnstn.auth.generated.model.AuthResponse;
 import com.johncnstn.auth.generated.model.RefreshTokenRequest;
 import com.johncnstn.auth.generated.model.SignInRequest;
 import com.johncnstn.auth.generated.model.SignUpRequest;
-import com.johncnstn.auth.generated.model.Token;
 import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.service.AuthService;
 import javax.validation.Valid;
@@ -20,13 +20,13 @@ public class AuthApiController implements AuthApi {
     private final AuthService authService;
 
     @Override
-    public ResponseEntity<Token> refreshToken(@Valid RefreshTokenRequest request) {
+    public ResponseEntity<AuthResponse> refreshToken(@Valid RefreshTokenRequest request) {
         var response = authService.refreshToken(request);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<Token> signIn(@Valid SignInRequest request) {
+    public ResponseEntity<AuthResponse> signIn(@Valid SignInRequest request) {
         var response = authService.signIn(request);
         return ResponseEntity.ok(response);
     }

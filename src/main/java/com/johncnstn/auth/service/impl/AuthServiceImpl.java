@@ -7,10 +7,10 @@ import static com.johncnstn.auth.mapper.UserMapper.USER_MAPPER;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 
 import com.johncnstn.auth.entity.UserEntity;
+import com.johncnstn.auth.generated.model.AuthResponse;
 import com.johncnstn.auth.generated.model.RefreshTokenRequest;
 import com.johncnstn.auth.generated.model.SignInRequest;
 import com.johncnstn.auth.generated.model.SignUpRequest;
-import com.johncnstn.auth.generated.model.Token;
 import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.generated.model.UserRole;
 import com.johncnstn.auth.repository.UserRepository;
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional(readOnly = true)
-    public Token signIn(SignInRequest request) {
+    public AuthResponse signIn(SignInRequest request) {
         var email = prepareEmail(request.getEmail());
         var password = request.getPassword();
         var authToken = buildAuthToken(email, password);
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional(readOnly = true)
-    public Token refreshToken(RefreshTokenRequest request) {
+    public AuthResponse refreshToken(RefreshTokenRequest request) {
         var accessToken = request.getAccessToken();
         var refreshToken = request.getRefreshToken();
         var token = refreshTokens(accessToken, refreshToken);
