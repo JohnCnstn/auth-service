@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
         var authToken = buildAuthToken(email, password);
         var authentication = authenticate(authToken);
         var token = createTokens(authentication);
-        return TOKEN_MAPPER.toModel(token);
+        return TOKEN_MAPPER.toAuthResponse(token);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
         var accessToken = request.getAccessToken();
         var refreshToken = request.getRefreshToken();
         var token = refreshTokens(accessToken, refreshToken);
-        return TOKEN_MAPPER.toModel(token);
+        return TOKEN_MAPPER.toAuthResponse(token);
     }
 
     private String hashPassword(String password) {

@@ -11,5 +11,5 @@ public interface TokenMapper {
 
     TokenMapper TOKEN_MAPPER = getMapper(TokenMapper.class);
 
-    AuthResponse toModel(JwtTokens source);
+    AuthResponse toAuthResponse(JwtTokens source);
 }

@@ -12,5 +12,5 @@ public interface AuthService {
 
     AuthResponse signIn(SignInRequest request);
 
-    AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
+    AuthResponse refreshToken(RefreshTokenRequest request);
 }
