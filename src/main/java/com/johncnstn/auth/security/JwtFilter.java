@@ -23,19 +23,25 @@ public class JwtFilter extends GenericFilterBean {
 
     public static final String TOKEN_PREFIX = "Bearer ";
 
-    private TokensProvider tokensProvider;
+    private TokenProvider tokenProvider;
 
     @Override
     public void doFilter(
             ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
+
         var httpServletRequest = (HttpServletRequest) servletRequest;
         var token = resolveToken(httpServletRequest);
-        if (isNotEmpty(token) && tokensProvider.validateAccessToken(token)) {
-            var authentication = tokensProvider.getAuthentication(token);
+        if (isValidToken(token)) {
+            var authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private boolean isValidToken(String token) {
+        return isNotEmpty(token) && tokenProvider.validateAccessToken(token);
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -43,6 +49,7 @@ public class JwtFilter extends GenericFilterBean {
         if (isNotEmpty(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
             return bearerToken.substring(TOKEN_PREFIX.length());
         }
+
         return null;
     }
 }

@@ -10,19 +10,15 @@ import org.apache.commons.lang3.CharUtils;
 
 public class PasswordValidator implements ConstraintValidator<Password, CharSequence> {
 
-    @SuppressWarnings("checkstyle:LineLength")
     private static final CharMatcher PRINTABLE_MATCHER =
             CharMatcher.forPredicate(CharUtils::isAsciiPrintable).precomputed();
 
-    @SuppressWarnings("checkstyle:LineLength")
     private static final CharMatcher LOWER_MATCHER =
             CharMatcher.forPredicate(CharUtils::isAsciiAlphaLower).precomputed();
 
-    @SuppressWarnings("checkstyle:LineLength")
     private static final CharMatcher UPPER_MATCHER =
             CharMatcher.forPredicate(CharUtils::isAsciiAlphaUpper).precomputed();
 
-    @SuppressWarnings("checkstyle:LineLength")
     private static final CharMatcher DIGITS_MATCHER =
             CharMatcher.forPredicate(CharUtils::isAsciiNumeric).precomputed();
 

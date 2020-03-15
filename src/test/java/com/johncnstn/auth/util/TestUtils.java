@@ -1,6 +1,6 @@
 package com.johncnstn.auth.util;
 
-import static com.johncnstn.auth.util.RandomUtilKt.generatePassword;
+import static com.johncnstn.auth.util.RandomUtils.generatePassword;
 import static java.util.UUID.randomUUID;
 
 import com.github.javafaker.Faker;

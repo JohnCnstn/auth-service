@@ -6,7 +6,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import com.johncnstn.auth.security.JwtConfigurer;
-import com.johncnstn.auth.security.TokensProvider;
+import com.johncnstn.auth.security.TokenProvider;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -33,7 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final CorsFilter corsFilter;
-    private final TokensProvider tokensProvider;
+    private final TokenProvider tokenProvider;
     private final UserDetailsService userDetailsService;
 
     @SneakyThrows
@@ -92,6 +92,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private JwtConfigurer securityConfigurerAdapter() {
-        return new JwtConfigurer(tokensProvider);
+        return new JwtConfigurer(tokenProvider);
     }
 }

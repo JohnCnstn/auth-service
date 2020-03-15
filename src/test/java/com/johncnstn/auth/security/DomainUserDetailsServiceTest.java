@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.unit.AbstractUnitTest;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
@@ -25,7 +26,7 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
     public void loadExistingUserShouldReturnUser() {
         // GIVEN
         var userEntity = userEntity(UserRoleType.USER);
-        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(userEntity);
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(Optional.of(userEntity));
 
         // WHEN
         var userDetails = userDetailsService.loadUserByUsername(userEntity.getEmail());
@@ -48,7 +49,7 @@ public class DomainUserDetailsServiceTest extends AbstractUnitTest {
     public void loadNotExistingUserShouldThrowException() {
         // GIVEN
         var email = email();
-        when(userRepository.findByEmail(email)).thenReturn(null);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // WHEN
         Executable executable = () -> userDetailsService.loadUserByUsername(email);

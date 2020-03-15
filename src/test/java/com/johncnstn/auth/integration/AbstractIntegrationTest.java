@@ -10,7 +10,7 @@ import com.johncnstn.auth.generated.model.User;
 import com.johncnstn.auth.initializer.PostgresInitializer;
 import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.security.JwtTokens;
-import com.johncnstn.auth.security.TokensProvider;
+import com.johncnstn.auth.security.TokenProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public abstract class AbstractIntegrationTest {
 
     @Autowired protected ObjectMapper objectMapper;
 
-    @Autowired protected TokensProvider tokensProvider;
+    @Autowired protected TokenProvider tokenProvider;
 
     @Autowired protected UserRepository userRepository;
 
@@ -61,6 +61,6 @@ public abstract class AbstractIntegrationTest {
 
     protected JwtTokens tokensForUser(UserEntity entity) {
         var details = USER_MAPPER.toUserDetails(entity);
-        return tokensProvider.createTokens(details);
+        return tokenProvider.createTokens(details);
     }
 }

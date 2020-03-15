@@ -25,7 +25,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/SignUpRequest'
       responses:
         201:
           description: Created
@@ -56,7 +56,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/AuthResponse'
         default:
           $ref: '#/components/responses/UnexpectedError'
 
@@ -79,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/AuthResponse'
         default:
           $ref: '#/components/responses/UnexpectedError'
 
@@ -92,7 +92,7 @@ components:
 
   schemas:
 
-    Token:
+    AuthResponse:
       type: object
       properties:
         issuedAt:
@@ -136,6 +136,17 @@ components:
         refreshToken:
           type: string
           x-format: not-blank
+
+    SignUpRequest:
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
 
     User:
       required:

@@ -20,18 +20,18 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-public class TokensProviderTest extends AbstractUnitTest {
+public class TokenProviderTest extends AbstractUnitTest {
 
     private static AppProperties appProperties;
-    private static TokensProvider tokensProvider;
+    private static TokenProvider tokenProvider;
     private static long accessTokenValidityMillis;
     private static long refreshTokenValidityMillis;
 
     @BeforeAll
     public static void setUp() {
         appProperties = new AppProperties();
-        tokensProvider = new TokensProvider(appProperties);
-        tokensProvider.init();
+        tokenProvider = new TokenProvider(appProperties);
+        tokenProvider.init();
         accessTokenValidityMillis = appProperties.getJwt().getAccessTokenValidity() * 1000;
         refreshTokenValidityMillis = appProperties.getJwt().getRefreshTokenValidity() * 1000;
     }
@@ -43,7 +43,7 @@ public class TokensProviderTest extends AbstractUnitTest {
         var authentication = new UsernamePasswordAuthenticationToken(principal, "password");
 
         // WHEN
-        JwtTokens tokens = tokensProvider.createTokens(authentication);
+        JwtTokens tokens = tokenProvider.createTokens(authentication);
 
         // THEN
         assertSoftly(
@@ -90,7 +90,7 @@ public class TokensProviderTest extends AbstractUnitTest {
                                         .toInstant()));
 
         // WHEN
-        JwtTokens tokens = tokensProvider.refreshTokens(accessToken, refreshToken);
+        JwtTokens tokens = tokenProvider.refreshTokens(accessToken, refreshToken);
 
         // THEN
         assertSoftly(

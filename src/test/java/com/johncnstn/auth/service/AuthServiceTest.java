@@ -10,13 +10,12 @@ import static org.mockito.Mockito.when;
 import com.johncnstn.auth.entity.UserEntity;
 import com.johncnstn.auth.entity.enums.UserRoleType;
 import com.johncnstn.auth.generated.model.SignInRequest;
-import com.johncnstn.auth.generated.model.User;
-import com.johncnstn.auth.generated.model.UserRole;
+import com.johncnstn.auth.generated.model.SignUpRequest;
 import com.johncnstn.auth.repository.UserRepository;
 import com.johncnstn.auth.security.DomainGrantedAuthority;
 import com.johncnstn.auth.security.DomainUserDetails;
 import com.johncnstn.auth.security.JwtTokens;
-import com.johncnstn.auth.security.TokensProvider;
+import com.johncnstn.auth.security.TokenProvider;
 import com.johncnstn.auth.service.impl.AuthServiceImpl;
 import com.johncnstn.auth.unit.AbstractUnitTest;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ public class AuthServiceTest extends AbstractUnitTest {
 
     @Mock private PasswordEncoder passwordEncoder;
 
-    @Mock private TokensProvider tokensProvider;
+    @Mock private TokenProvider tokenProvider;
 
     @Mock private UserRepository userRepository;
 
@@ -41,29 +40,28 @@ public class AuthServiceTest extends AbstractUnitTest {
     @Test
     public void signUp() {
         // GIVEN
-        var rawUser = new User();
-        rawUser.setEmail("test@mail.com");
-        rawUser.setPassword("demo123");
+        var signUpRequest = new SignUpRequest();
+        signUpRequest.setEmail("test@mail.com");
+        signUpRequest.setPassword("demo123");
 
         var entityToReturn =
-                new UserEntity(randomUUID(), rawUser.getEmail(), "xyz", UserRoleType.USER);
+                new UserEntity(randomUUID(), signUpRequest.getEmail(), "xyz", UserRoleType.USER);
 
-        when(passwordEncoder.encode(any())).thenReturn(any());
-        when(userRepository.findByEmail(rawUser.getEmail())).thenReturn(entityToReturn);
+        when(passwordEncoder.encode(any())).thenReturn("hashed");
+        when(userRepository.save(any())).thenReturn(entityToReturn);
 
         // WHEN
-        var user = authService.signUp(rawUser, UserRole.USER);
+        var user = authService.signUp(signUpRequest);
 
         // THEN
         assertSoftly(
                 it -> {
                     it.assertThat(user).isNotNull();
                     it.assertThat(user.getId()).isNotNull();
-                    it.assertThat(user.getEmail()).isEqualTo(rawUser.getEmail());
+                    it.assertThat(user.getEmail()).isEqualTo(signUpRequest.getEmail());
                 });
 
         verify(userRepository).save(any());
-        verify(userRepository).findByEmail(any());
     }
 
     @Test
@@ -87,7 +85,7 @@ public class AuthServiceTest extends AbstractUnitTest {
                         .userDetails(principal)
                         .build();
 
-        when(tokensProvider.createTokens(authentication)).thenReturn(tokensToReturn);
+        when(tokenProvider.createTokens(authentication)).thenReturn(tokensToReturn);
 
         // WHEN
         var token = authService.signIn(request);
